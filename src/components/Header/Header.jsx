@@ -1,6 +1,13 @@
+import { useState } from "react";
 import "./Header.css";
 
 function Header() {
+  const [showUserPopup, setShowUserPopup] = useState(false);
+
+  const toggleUserPopup = () => {
+    setShowUserPopup(!showUserPopup);
+  };
+
   return (
     <header className="header">
       <div className="container">
@@ -19,12 +26,13 @@ function Header() {
             <button className="header__btn-main-new _hover01" id="btnMainNew">
               <a href="#popNewCard">Создать новую задачу</a>
             </button>
-            <a href="#user-set-target" className="header__user _hover02">
+            <button onClick={toggleUserPopup} className="header__user _hover02">
               Ivan Ivanov
-            </a>
+            </button>
             <div
               className="header__pop-user-set pop-user-set"
               id="user-set-target"
+              style={{ display: showUserPopup ? "block" : "none" }}
             >
               <p className="pop-user-set__name">Ivan Ivanov</p>
               <p className="pop-user-set__mail">ivan.ivanov@gmail.com</p>

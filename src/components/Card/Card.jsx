@@ -1,6 +1,22 @@
 import "./Card.css";
 
-function Card({ theme, themeText, title, date }) {
+function Card({ topic, title, date }) {
+  // Определяем тему карточки на основе topic
+  const getTheme = (topic) => {
+    switch (topic) {
+      case "Web Design":
+        return { theme: "_orange", themeText: "Web Design" };
+      case "Research":
+        return { theme: "_green", themeText: "Research" };
+      case "Copywriting":
+        return { theme: "_purple", themeText: "Copywriting" };
+      default:
+        return { theme: "_gray", themeText: topic };
+    }
+  };
+
+  const { theme, themeText } = getTheme(topic);
+
   return (
     <div className="cards__item">
       <div className="cards__card card">

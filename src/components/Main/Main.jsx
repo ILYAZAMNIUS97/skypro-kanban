@@ -1,73 +1,52 @@
+import { useState, useEffect } from "react";
 import "./Main.css";
 import Column from "../Column/Column";
+import { cardList } from "../../data.js";
 
 function Main() {
-  const columns = [
-    {
-      title: "Без статуса",
-      cards: [
-        {
-          theme: "_orange",
-          themeText: "Web Design",
-          title: "Название задачи",
-          date: "30.10.23",
-        },
-      ],
-    },
-    {
-      title: "Нужно сделать",
-      cards: [
-        {
-          theme: "_green",
-          themeText: "Research",
-          title: "Название задачи",
-          date: "30.10.23",
-        },
-      ],
-    },
-    {
-      title: "В работе",
-      cards: [
-        {
-          theme: "_purple",
-          themeText: "Copywriting",
-          title: "Название задачи",
-          date: "30.10.23",
-        },
-      ],
-    },
-    {
-      title: "Тестирование",
-      cards: [
-        {
-          theme: "_green",
-          themeText: "Research",
-          title: "Название задачи",
-          date: "30.10.23",
-        },
-      ],
-    },
-    {
-      title: "Готово",
-      cards: [
-        {
-          theme: "_green",
-          themeText: "Research",
-          title: "Название задачи",
-          date: "30.10.23",
-        },
-      ],
-    },
-  ];
+  const [isLoading, setIsLoading] = useState(true);
+  const [cards, setCards] = useState([]);
+
+  // Имитация загрузки данных
+  useEffect(() => {
+    setTimeout(() => {
+      setCards(cardList);
+      setIsLoading(false);
+    }, 2000); // 2 секунды задержки
+  }, []);
+
+  // Группировка карточек по статусам
+  const groupCardsByStatus = (cards) => {
+    const statuses = [
+      "Без статуса",
+      "Нужно сделать",
+      "В работе",
+      "Тестирование",
+      "Готово",
+    ];
+
+    return statuses.map((status) => ({
+      title: status,
+      cards: cards.filter((card) => card.status === status),
+    }));
+  };
+
+  const columns = groupCardsByStatus(cards);
 
   return (
     <main className="main">
       <div className="container">
         <div className="main__block">
           <div className="main__content">
-            {columns.map((column, index) => (
-              <Column key={index} title={column.title} cards={column.cards} />
-            ))}
+            {isLoading ? (
+              <div className="loading">
+                <p>Данные загружаются...</p>
+              </div>
+            ) : (
+              columns.map((column, index) => (
+                <Column key={index} title={column.title} cards={column.cards} />
+              ))
+            )}
           </div>
         </div>
       </div>

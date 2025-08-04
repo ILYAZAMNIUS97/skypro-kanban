@@ -12,6 +12,21 @@
   display: flex;
 }
 
+.loading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.loading p {
+  font-size: 18px;
+  color: #565eef;
+  font-weight: 500;
+  text-align: center;
+}
+
 @media screen and (max-width: 1200px) {
   .main__block {
     width: 100%;
