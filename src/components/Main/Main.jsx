@@ -7,7 +7,7 @@ function Main() {
   const [isLoading, setIsLoading] = useState(true);
   const [cards, setCards] = useState([]);
 
-  // Имитация загрузки данных
+  // Имитация загрузки данных на странице
   useEffect(() => {
     setTimeout(() => {
       setCards(cardList);
@@ -15,7 +15,7 @@ function Main() {
     }, 2000); // 2 секунды задержки
   }, []);
 
-  // Группировка карточек по статусам
+  // Группировка карточек по статуcу
   const groupCardsByStatus = (cards) => {
     const statuses = [
       "Без статуса",
