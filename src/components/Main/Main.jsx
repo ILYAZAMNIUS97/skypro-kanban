@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Main.css";
 import Column from "../Column/Column";
-import { cardList } from "../../data.js";
+import { cardList } from "../../../data.js";
 
 function Main() {
   const [isLoading, setIsLoading] = useState(true);

@@ -48,6 +48,10 @@
   font-size: 14px;
   line-height: 20px;
   color: #565eef;
+  border: none;
+  background: none;
+  outline: none;
+  cursor: pointer;
 }
 .header__user::after {
   content: "";
