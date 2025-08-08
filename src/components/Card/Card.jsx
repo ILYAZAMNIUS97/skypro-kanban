@@ -1,6 +1,15 @@
-import "./Card.css";
+import {
+  CardItem,
+  Card,
+  CardGroup,
+  CardTheme,
+  CardButton,
+  CardContent,
+  CardTitle,
+  CardDate,
+} from "./Card.styled";
 
-function Card({ topic, title, date }) {
+function CardComponent({ topic, title, date }) {
   // Определяем тему карточки на основе topic
   const getTheme = (topic) => {
     switch (topic) {
@@ -18,25 +27,25 @@ function Card({ topic, title, date }) {
   const { theme, themeText } = getTheme(topic);
 
   return (
-    <div className="cards__item">
-      <div className="cards__card card">
-        <div className="card__group">
-          <div className={`card__theme ${theme}`}>
-            <p className={theme}>{themeText}</p>
-          </div>
+    <CardItem>
+      <Card>
+        <CardGroup>
+          <CardTheme className={theme}>
+            <p>{themeText}</p>
+          </CardTheme>
           <a href="#popBrowse" target="_self">
-            <div className="card__btn">
+            <CardButton>
               <div></div>
               <div></div>
               <div></div>
-            </div>
+            </CardButton>
           </a>
-        </div>
-        <div className="card__content">
+        </CardGroup>
+        <CardContent>
           <a href="" target="_blank">
-            <h3 className="card__title">{title}</h3>
+            <CardTitle>{title}</CardTitle>
           </a>
-          <div className="card__date">
+          <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="13"
@@ -66,11 +75,11 @@ function Card({ topic, title, date }) {
               </defs>
             </svg>
             <p>{date}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+          </CardDate>
+        </CardContent>
+      </Card>
+    </CardItem>
   );
 }
 
-export default Card;
+export default CardComponent;
