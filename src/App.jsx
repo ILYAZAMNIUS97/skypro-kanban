@@ -1,21 +1,29 @@
-import Header from "./components/Header/Header";
-import Main from "./components/Main/Main";
-import PopNewCard from "./components/popups/PopNewCard/PopNewCard";
-import PopBrowse from "./components/popups/PopBrowse/PopBrowse";
-import PopUser from "./components/popups/PopUser/PopUser";
-import { GlobalStyle, Wrapper } from "./App.styled";
+import { useState } from "react";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./components/AppRoutes/AppRoutes";
+import { GlobalStyle } from "./App.styled";
 
 function App() {
+  const [isAuth, setIsAuth] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuth(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuth(false);
+  };
+
   return (
     <>
       <GlobalStyle />
-      <Wrapper>
-        <PopUser />
-        <PopNewCard />
-        <PopBrowse />
-        <Header />
-        <Main />
-      </Wrapper>
+      <BrowserRouter>
+        <AppRoutes
+          isAuth={isAuth}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+        />
+      </BrowserRouter>
     </>
   );
 }

@@ -15,11 +15,16 @@ import {
   LogoutButton,
 } from "./Header.styled";
 
-function Header() {
+function Header({ onShowExitModal }) {
   const [showUserPopup, setShowUserPopup] = useState(false);
 
   const toggleUserPopup = () => {
     setShowUserPopup(!showUserPopup);
+  };
+
+  const handleLogoutClick = () => {
+    setShowUserPopup(false); // Закрываем попап пользователя
+    onShowExitModal(); // Показываем модальное окно выхода
   };
 
   return (
@@ -38,7 +43,7 @@ function Header() {
           </LogoContainer>
           <HeaderNav>
             <NewTaskButton id="btnMainNew">
-              <a href="#popNewCard">Создать новую задачу</a>
+              <a href="/new-task">Создать новую задачу</a>
             </NewTaskButton>
             <UserButton onClick={toggleUserPopup}>Ivan Ivanov</UserButton>
             <UserPopup $isVisible={showUserPopup}>
@@ -48,8 +53,8 @@ function Header() {
                 <p>Темная тема</p>
                 <ThemeCheckbox name="checkbox" />
               </ThemeContainer>
-              <LogoutButton type="button">
-                <a href="#popExit">Выйти</a>
+              <LogoutButton type="button" onClick={handleLogoutClick}>
+                Выйти
               </LogoutButton>
             </UserPopup>
           </HeaderNav>
