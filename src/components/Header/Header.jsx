@@ -1,5 +1,19 @@
 import { useState } from "react";
-import "./Header.css";
+import { Container } from "../../App.styled";
+import {
+  HeaderContainer,
+  HeaderBlock,
+  LogoContainer,
+  HeaderNav,
+  NewTaskButton,
+  UserButton,
+  UserPopup,
+  UserName,
+  UserEmail,
+  ThemeContainer,
+  ThemeCheckbox,
+  LogoutButton,
+} from "./Header.styled";
 
 function Header() {
   const [showUserPopup, setShowUserPopup] = useState(false);
@@ -9,45 +23,39 @@ function Header() {
   };
 
   return (
-    <header className="header">
-      <div className="container">
-        <div className="header__block">
-          <div className="header__logo _show _light">
+    <HeaderContainer>
+      <Container>
+        <HeaderBlock>
+          <LogoContainer className="_show _light">
             <a href="" target="_self">
               <img src="images/logo.png" alt="logo" />
             </a>
-          </div>
-          <div className="header__logo _dark">
+          </LogoContainer>
+          <LogoContainer className="_dark">
             <a href="" target="_self">
               <img src="images/logo_dark.png" alt="logo" />
             </a>
-          </div>
-          <nav className="header__nav">
-            <button className="header__btn-main-new _hover01" id="btnMainNew">
+          </LogoContainer>
+          <HeaderNav>
+            <NewTaskButton id="btnMainNew">
               <a href="#popNewCard">Создать новую задачу</a>
-            </button>
-            <button onClick={toggleUserPopup} className="header__user _hover02">
-              Ivan Ivanov
-            </button>
-            <div
-              className="header__pop-user-set pop-user-set"
-              id="user-set-target"
-              style={{ display: showUserPopup ? "block" : "none" }}
-            >
-              <p className="pop-user-set__name">Ivan Ivanov</p>
-              <p className="pop-user-set__mail">ivan.ivanov@gmail.com</p>
-              <div className="pop-user-set__theme">
+            </NewTaskButton>
+            <UserButton onClick={toggleUserPopup}>Ivan Ivanov</UserButton>
+            <UserPopup $isVisible={showUserPopup}>
+              <UserName>Ivan Ivanov</UserName>
+              <UserEmail>ivan.ivanov@gmail.com</UserEmail>
+              <ThemeContainer>
                 <p>Темная тема</p>
-                <input type="checkbox" className="checkbox" name="checkbox" />
-              </div>
-              <button type="button" className="_hover03">
+                <ThemeCheckbox name="checkbox" />
+              </ThemeContainer>
+              <LogoutButton type="button">
                 <a href="#popExit">Выйти</a>
-              </button>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </header>
+              </LogoutButton>
+            </UserPopup>
+          </HeaderNav>
+        </HeaderBlock>
+      </Container>
+    </HeaderContainer>
   );
 }
 

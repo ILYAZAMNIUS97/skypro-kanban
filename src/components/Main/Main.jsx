@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
-import "./Main.css";
 import Column from "../Column/Column";
 import { cardList } from "../../../data.js";
+import { Container } from "../../App.styled";
+import {
+  MainContainer,
+  MainBlock,
+  MainContent,
+  LoadingContainer,
+} from "./Main.styled";
 
 function Main() {
   const [isLoading, setIsLoading] = useState(true);
   const [cards, setCards] = useState([]);
 
-  // Имитация загрузки данных на странице
+  // Имитация загрузки данных
   useEffect(() => {
     setTimeout(() => {
       setCards(cardList);
@@ -15,7 +21,7 @@ function Main() {
     }, 2000); // 2 секунды задержки
   }, []);
 
-  // Группировка карточек по статуcу
+  // Группировка карточек по статусам
   const groupCardsByStatus = (cards) => {
     const statuses = [
       "Без статуса",
@@ -34,23 +40,23 @@ function Main() {
   const columns = groupCardsByStatus(cards);
 
   return (
-    <main className="main">
-      <div className="container">
-        <div className="main__block">
-          <div className="main__content">
+    <MainContainer>
+      <Container>
+        <MainBlock>
+          <MainContent>
             {isLoading ? (
-              <div className="loading">
+              <LoadingContainer>
                 <p>Данные загружаются...</p>
-              </div>
+              </LoadingContainer>
             ) : (
               columns.map((column, index) => (
                 <Column key={index} title={column.title} cards={column.cards} />
               ))
             )}
-          </div>
-        </div>
-      </div>
-    </main>
+          </MainContent>
+        </MainBlock>
+      </Container>
+    </MainContainer>
   );
 }
 
