@@ -24,7 +24,8 @@ function CardPage() {
     if (foundCard) {
       setCard(foundCard);
     } else {
-      navigate("/404");
+      // Перенаправляем на несуществующий роут, который поймает * роут
+      navigate("/not-found");
     }
   }, [id, navigate]);
 
