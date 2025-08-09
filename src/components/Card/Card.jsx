@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   CardItem,
   Card,
@@ -9,7 +10,7 @@ import {
   CardDate,
 } from "./Card.styled";
 
-function CardComponent({ topic, title, date }) {
+function CardComponent({ id, topic, title, date }) {
   // Определяем тему карточки на основе topic
   const getTheme = (topic) => {
     switch (topic) {
@@ -42,9 +43,9 @@ function CardComponent({ topic, title, date }) {
           </a>
         </CardGroup>
         <CardContent>
-          <a href="" target="_blank">
+          <Link to={`/card/${id}`}>
             <CardTitle>{title}</CardTitle>
-          </a>
+          </Link>
           <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"
