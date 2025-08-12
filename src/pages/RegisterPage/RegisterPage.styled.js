@@ -127,6 +127,15 @@ export const ErrorMessage = styled.div`
   margin-left: 8px;
 `;
 
+export const HelpText = styled.div`
+  color: #94a6be;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  margin-top: 4px;
+  margin-left: 8px;
+`;
+
 export const AuthFormP = styled.p`
   color: #000;
   font-size: 14px;

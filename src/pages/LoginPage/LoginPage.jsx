@@ -14,6 +14,7 @@ import {
   AuthFormGroup2,
   AuthFormP,
   ErrorMessage,
+  HelpText,
 } from "./LoginPage.styled";
 
 function LoginPage({ onLogin }) {
@@ -127,7 +128,7 @@ function LoginPage({ onLogin }) {
               <AuthFormGroup>
                 <AuthInput
                   type="text"
-                  placeholder="Логин"
+                  placeholder="Логин (используйте: admin)"
                   value={login}
                   onChange={handleLoginChange}
                   $hasError={!!errors.login || !!authError}
@@ -136,11 +137,14 @@ function LoginPage({ onLogin }) {
                 {errors.login && errors.login !== "invalid" && (
                   <ErrorMessage>{errors.login}</ErrorMessage>
                 )}
+                {!errors.login && !authError && (
+                  <HelpText>Для демо используйте логин: admin</HelpText>
+                )}
               </AuthFormGroup>
               <AuthFormGroup>
                 <AuthInput
                   type="password"
-                  placeholder="Пароль"
+                  placeholder="Пароль (используйте: admin)"
                   value={password}
                   onChange={handlePasswordChange}
                   $hasError={!!errors.password || !!authError}
@@ -148,6 +152,9 @@ function LoginPage({ onLogin }) {
                 />
                 {errors.password && errors.password !== "invalid" && (
                   <ErrorMessage>{errors.password}</ErrorMessage>
+                )}
+                {!errors.password && !authError && (
+                  <HelpText>Для демо используйте пароль: admin</HelpText>
                 )}
               </AuthFormGroup>
 

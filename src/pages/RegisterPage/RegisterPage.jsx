@@ -14,6 +14,7 @@ import {
   AuthFormGroup2,
   AuthFormP,
   ErrorMessage,
+  HelpText,
 } from "./RegisterPage.styled";
 
 function RegisterPage({ onLogin }) {
@@ -59,6 +60,32 @@ function RegisterPage({ onLogin }) {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Функция для получения подсказки по полю
+  const getFieldHint = (fieldName) => {
+    switch (fieldName) {
+      case "name":
+        return !name.trim() ? "Введите ваше имя" : "";
+      case "login":
+        if (!login.trim()) return "Логин должен содержать минимум 3 символа";
+        if (login.trim() && !validateLogin(login))
+          return "Слишком короткий логин (нужно минимум 3 символа)";
+        return "";
+      case "password":
+        if (!password.trim())
+          return "Пароль должен содержать минимум 6 символов";
+        if (password.trim() && password.length < 6)
+          return `Пароль слишком короткий (${password.length}/6 символов)`;
+        return "";
+      case "confirmPassword":
+        if (!confirmPassword.trim()) return "Пароли должны совпадать";
+        if (confirmPassword.trim() && password !== confirmPassword)
+          return "Пароли не совпадают";
+        return "";
+      default:
+        return "";
+    }
   };
 
   // Проверяем, валидна ли форма для активации кнопки
@@ -150,29 +177,35 @@ function RegisterPage({ onLogin }) {
               <AuthFormGroup>
                 <AuthInput
                   type="text"
-                  placeholder="Имя"
+                  placeholder="Имя пользователя"
                   value={name}
                   onChange={handleNameChange}
                   $hasError={!!errors.name}
                   required
                 />
                 {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
+                {!errors.name && getFieldHint("name") && (
+                  <HelpText>{getFieldHint("name")}</HelpText>
+                )}
               </AuthFormGroup>
               <AuthFormGroup>
                 <AuthInput
                   type="text"
-                  placeholder="Логин"
+                  placeholder="Логин (минимум 3 символа)"
                   value={login}
                   onChange={handleLoginChange}
                   $hasError={!!errors.login}
                   required
                 />
                 {errors.login && <ErrorMessage>{errors.login}</ErrorMessage>}
+                {!errors.login && getFieldHint("login") && (
+                  <HelpText>{getFieldHint("login")}</HelpText>
+                )}
               </AuthFormGroup>
               <AuthFormGroup>
                 <AuthInput
                   type="password"
-                  placeholder="Пароль"
+                  placeholder="Пароль (минимум 6 символов)"
                   value={password}
                   onChange={handlePasswordChange}
                   $hasError={!!errors.password}
@@ -180,6 +213,9 @@ function RegisterPage({ onLogin }) {
                 />
                 {errors.password && (
                   <ErrorMessage>{errors.password}</ErrorMessage>
+                )}
+                {!errors.password && getFieldHint("password") && (
+                  <HelpText>{getFieldHint("password")}</HelpText>
                 )}
               </AuthFormGroup>
               <AuthFormGroup>
@@ -193,6 +229,9 @@ function RegisterPage({ onLogin }) {
                 />
                 {errors.confirmPassword && (
                   <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
+                )}
+                {!errors.confirmPassword && getFieldHint("confirmPassword") && (
+                  <HelpText>{getFieldHint("confirmPassword")}</HelpText>
                 )}
               </AuthFormGroup>
 
