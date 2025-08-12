@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authApi } from "../../services/api";
 import {
   PageWrapper,
   AuthContainer,
@@ -16,18 +17,18 @@ import {
 } from "./RegisterPage.styled";
 
 function RegisterPage({ onLogin }) {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [authError, setAuthError] = useState("");
   const navigate = useNavigate();
 
-  // Функция для валидации email
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  // Функция для валидации логина
+  const validateLogin = (login) => {
+    return login.trim().length >= 3; // Минимум 3 символа для логина
   };
 
   // Функция для валидации формы
@@ -38,10 +39,10 @@ function RegisterPage({ onLogin }) {
       newErrors.name = "Поле имя обязательно для заполнения";
     }
 
-    if (!email.trim()) {
-      newErrors.email = "Поле email обязательно для заполнения";
-    } else if (!validateEmail(email)) {
-      newErrors.email = "Введите корректный email адрес";
+    if (!login.trim()) {
+      newErrors.login = "Поле логин обязательно для заполнения";
+    } else if (!validateLogin(login)) {
+      newErrors.login = "Логин должен содержать минимум 3 символа";
     }
 
     if (!password.trim()) {
@@ -64,10 +65,10 @@ function RegisterPage({ onLogin }) {
   const isFormValid = () => {
     return (
       name.trim() &&
-      email.trim() &&
+      login.trim() &&
       password.trim() &&
       confirmPassword.trim() &&
-      validateEmail(email) &&
+      validateLogin(login) &&
       password.length >= 6 &&
       password === confirmPassword
     );
@@ -80,10 +81,10 @@ function RegisterPage({ onLogin }) {
     }
   };
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    if (errors.email) {
-      setErrors((prev) => ({ ...prev, email: "" }));
+  const handleLoginChange = (e) => {
+    setLogin(e.target.value);
+    if (errors.login) {
+      setErrors((prev) => ({ ...prev, login: "" }));
     }
   };
 
@@ -113,15 +114,28 @@ function RegisterPage({ onLogin }) {
     }
 
     setIsLoading(true);
+    setAuthError("");
 
-    // Имитация регистрации
-    setTimeout(() => {
-      if (email && password && name && password === confirmPassword) {
-        onLogin();
-        navigate("/");
-      }
+    try {
+      // Выполняем API запрос для регистрации
+      await authApi.register({
+        name: name,
+        login: login,
+        password: password,
+      });
+
+      // Успешная регистрация
+      onLogin();
+      navigate("/");
+    } catch (error) {
+      // Обработка ошибок регистрации
+      console.error("Ошибка регистрации:", error);
+      setAuthError(
+        error.message || "Произошла ошибка при регистрации. Попробуйте еще раз."
+      );
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -146,14 +160,14 @@ function RegisterPage({ onLogin }) {
               </AuthFormGroup>
               <AuthFormGroup>
                 <AuthInput
-                  type="email"
-                  placeholder="Эл.почта"
-                  value={email}
-                  onChange={handleEmailChange}
-                  $hasError={!!errors.email}
+                  type="text"
+                  placeholder="Логин"
+                  value={login}
+                  onChange={handleLoginChange}
+                  $hasError={!!errors.login}
                   required
                 />
-                {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
+                {errors.login && <ErrorMessage>{errors.login}</ErrorMessage>}
               </AuthFormGroup>
               <AuthFormGroup>
                 <AuthInput
@@ -181,6 +195,17 @@ function RegisterPage({ onLogin }) {
                   <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
                 )}
               </AuthFormGroup>
+
+              {authError && (
+                <AuthFormGroup>
+                  <ErrorMessage
+                    style={{ textAlign: "center", marginTop: "10px" }}
+                  >
+                    {authError}
+                  </ErrorMessage>
+                </AuthFormGroup>
+              )}
+
               <AuthFormGroup2>
                 <AuthButton
                   type="submit"

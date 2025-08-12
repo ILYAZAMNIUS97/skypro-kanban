@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authApi } from "../../services/api";
 import {
   PageWrapper,
   AuthContainer,
@@ -16,36 +17,24 @@ import {
 } from "./LoginPage.styled";
 
 function LoginPage({ onLogin }) {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState("");
   const navigate = useNavigate();
 
-  // Правильные учетные данные для демонстрации
-  const VALID_EMAIL = "ivan.ivanov@gmail.com";
-  const VALID_PASSWORD = "password123";
-
-  // Функция для валидации email
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleEmailChange = (e) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
+  const handleLoginChange = (e) => {
+    const newLogin = e.target.value;
+    setLogin(newLogin);
 
     // Валидация в реальном времени
     const newErrors = { ...errors };
 
-    if (!newEmail.trim()) {
-      newErrors.email = "Поле email обязательно для заполнения";
-    } else if (!validateEmail(newEmail)) {
-      newErrors.email = "Введите корректный email адрес";
+    if (!newLogin.trim()) {
+      newErrors.login = "Поле логин обязательно для заполнения";
     } else {
-      delete newErrors.email;
+      delete newErrors.login;
     }
 
     setErrors(newErrors);
@@ -83,10 +72,8 @@ function LoginPage({ onLogin }) {
     // Принудительная валидация при отправке формы
     const newErrors = {};
 
-    if (!email.trim()) {
-      newErrors.email = "Поле email обязательно для заполнения";
-    } else if (!validateEmail(email)) {
-      newErrors.email = "Введите корректный email адрес";
+    if (!login.trim()) {
+      newErrors.login = "Поле логин обязательно для заполнения";
     }
 
     if (!password.trim()) {
@@ -102,23 +89,30 @@ function LoginPage({ onLogin }) {
     setIsLoading(true);
     setAuthError("");
 
-    // Имитация проверки логина
-    setTimeout(() => {
-      if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-        onLogin();
-        navigate("/");
-      } else {
-        // Неверные учетные данные
-        setAuthError(
+    try {
+      // Выполняем API запрос для авторизации
+      await authApi.login({
+        login: login,
+        password: password,
+      });
+
+      // Успешная авторизация
+      onLogin();
+      navigate("/");
+    } catch (error) {
+      // Обработка ошибок авторизации
+      console.error("Ошибка авторизации:", error);
+      setAuthError(
+        error.message ||
           "Введенные вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа."
-        );
-        setErrors({
-          email: "invalid",
-          password: "invalid",
-        });
-      }
+      );
+      setErrors({
+        login: "invalid",
+        password: "invalid",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -132,15 +126,15 @@ function LoginPage({ onLogin }) {
             <AuthForm onSubmit={handleSubmit}>
               <AuthFormGroup>
                 <AuthInput
-                  type="email"
-                  placeholder="Эл.почта"
-                  value={email}
-                  onChange={handleEmailChange}
-                  $hasError={!!errors.email || !!authError}
+                  type="text"
+                  placeholder="Логин"
+                  value={login}
+                  onChange={handleLoginChange}
+                  $hasError={!!errors.login || !!authError}
                   required
                 />
-                {errors.email && errors.email !== "invalid" && (
-                  <ErrorMessage>{errors.email}</ErrorMessage>
+                {errors.login && errors.login !== "invalid" && (
+                  <ErrorMessage>{errors.login}</ErrorMessage>
                 )}
               </AuthFormGroup>
               <AuthFormGroup>

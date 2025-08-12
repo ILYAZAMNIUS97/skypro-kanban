@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Column from "../Column/Column";
-import { cardList } from "../../../data.js";
+import { tasksApi } from "../../services/api";
 import { Container } from "../../App.styled";
 import {
   MainContainer,
@@ -12,13 +12,25 @@ import {
 function Main() {
   const [isLoading, setIsLoading] = useState(true);
   const [cards, setCards] = useState([]);
+  const [error, setError] = useState("");
 
-  // Имитация загрузки данных
+  // Загрузка данных с API
   useEffect(() => {
-    setTimeout(() => {
-      setCards(cardList);
-      setIsLoading(false);
-    }, 2000); // 2 секунды задержки
+    const loadTasks = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+        const tasksData = await tasksApi.getTasks();
+        setCards(tasksData);
+      } catch (err) {
+        console.error("Ошибка загрузки задач:", err);
+        setError(err.message || "Ошибка при загрузке задач");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTasks();
   }, []);
 
   // Группировка карточек по статусам
@@ -47,6 +59,10 @@ function Main() {
             {isLoading ? (
               <LoadingContainer>
                 <p>Данные загружаются...</p>
+              </LoadingContainer>
+            ) : error ? (
+              <LoadingContainer>
+                <p style={{ color: "red" }}>Ошибка: {error}</p>
               </LoadingContainer>
             ) : (
               columns.map((column, index) => (

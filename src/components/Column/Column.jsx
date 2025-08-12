@@ -10,8 +10,8 @@ function Column({ title, cards }) {
       <CardsContainer>
         {cards.map((card) => (
           <Card
-            key={card.id}
-            id={card.id}
+            key={card._id || card.id}
+            id={card._id || card.id}
             topic={card.topic}
             title={card.title}
             date={card.date}

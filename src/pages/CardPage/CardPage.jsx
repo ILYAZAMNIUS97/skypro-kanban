@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { cardList } from "../../../data.js";
+import { tasksApi } from "../../services/api";
 import Header from "../../components/Header/Header";
 import PopUser from "../../components/popups/PopUser/PopUser";
 import { Wrapper } from "../../App.styled";
@@ -18,14 +18,30 @@ function CardPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [card, setCard] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const foundCard = cardList.find((c) => c.id === parseInt(id));
-    if (foundCard) {
-      setCard(foundCard);
-    } else {
-      // Перенаправляем на несуществующий роут, который поймает * роут
-      navigate("/not-found");
+    const loadCard = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+        const cardData = await tasksApi.getTask(id);
+        setCard(cardData);
+      } catch (err) {
+        console.error("Ошибка загрузки карточки:", err);
+        setError(err.message || "Карточка не найдена");
+        // Перенаправляем на 404 если карточка не найдена
+        if (err.response?.status === 404) {
+          navigate("/not-found");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      loadCard();
     }
   }, [id, navigate]);
 
@@ -33,8 +49,16 @@ function CardPage() {
     navigate("/");
   };
 
-  if (!card) {
+  if (isLoading) {
     return <div>Загрузка...</div>;
+  }
+
+  if (error) {
+    return <div>Ошибка: {error}</div>;
+  }
+
+  if (!card) {
+    return <div>Карточка не найдена</div>;
   }
 
   return (
