@@ -9,7 +9,7 @@ import {
   LoadingContainer,
 } from "./Main.styled";
 
-const Main = forwardRef((props, ref) => {
+const Main = forwardRef(({ onCardClick }, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [cards, setCards] = useState([]);
   const [error, setError] = useState("");
@@ -74,7 +74,12 @@ const Main = forwardRef((props, ref) => {
               </LoadingContainer>
             ) : (
               columns.map((column, index) => (
-                <Column key={index} title={column.title} cards={column.cards} />
+                <Column
+                  key={index}
+                  title={column.title}
+                  cards={column.cards}
+                  onCardClick={onCardClick}
+                />
               ))
             )}
           </MainContent>

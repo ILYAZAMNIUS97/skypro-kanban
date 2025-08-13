@@ -183,9 +183,46 @@ export const tasksApi = {
     try {
       // Конвертируем дату из формата "21.08.2025" в ISO формат если указана
       let isoDate = null;
-      if (taskData.date) {
-        const [day, month, year] = taskData.date.split(".");
-        isoDate = new Date(year, month - 1, day).toISOString();
+
+      if (
+        taskData.date &&
+        typeof taskData.date === "string" &&
+        taskData.date.trim() !== ""
+      ) {
+        // Если дата уже в ISO формате, оставляем как есть
+        if (taskData.date.includes("-") && taskData.date.includes("T")) {
+          isoDate = taskData.date;
+        }
+        // Если дата в формате DD.MM.YYYY, конвертируем в ISO
+        else if (taskData.date.includes(".")) {
+          const [day, month, year] = taskData.date.split(".");
+          const dayNum = parseInt(day, 10);
+          const monthNum = parseInt(month, 10);
+          const yearNum = parseInt(year, 10);
+
+          // Валидация компонентов даты
+          if (
+            !isNaN(dayNum) &&
+            !isNaN(monthNum) &&
+            !isNaN(yearNum) &&
+            dayNum >= 1 &&
+            dayNum <= 31 &&
+            monthNum >= 1 &&
+            monthNum <= 12 &&
+            yearNum >= 1900 &&
+            yearNum <= 2100
+          ) {
+            const dateObj = new Date(yearNum, monthNum - 1, dayNum);
+            // Проверяем что дата корректная (не переполнилась)
+            if (
+              dateObj.getFullYear() === yearNum &&
+              dateObj.getMonth() === monthNum - 1 &&
+              dateObj.getDate() === dayNum
+            ) {
+              isoDate = dateObj.toISOString();
+            }
+          }
+        }
       }
 
       // Формируем данные согласно документации API
@@ -194,8 +231,12 @@ export const tasksApi = {
         topic: taskData.topic,
         status: taskData.status,
         description: taskData.description || "",
-        ...(isoDate && { date: isoDate }),
       };
+
+      // Добавляем дату только если она корректно обработана
+      if (isoDate) {
+        taskForAPI.date = isoDate;
+      }
 
       console.log("Отправляем данные на API:", taskForAPI);
 
@@ -238,13 +279,92 @@ export const tasksApi = {
    */
   updateTask: async (id, taskData) => {
     try {
-      const response = await api.put(`/api/kanban/${id}`, taskData);
-      return response.data.tasks; // Возвращает обновленный список
+      // Конвертируем дату из формата "21.08.2025" в ISO формат если указана
+      let isoDate = null;
+
+      if (
+        taskData.date &&
+        typeof taskData.date === "string" &&
+        taskData.date.trim() !== ""
+      ) {
+        // Если дата уже в ISO формате, оставляем как есть
+        if (taskData.date.includes("-") && taskData.date.includes("T")) {
+          isoDate = taskData.date;
+        }
+        // Если дата в формате DD.MM.YYYY, конвертируем в ISO
+        else if (taskData.date.includes(".")) {
+          const [day, month, year] = taskData.date.split(".");
+          const dayNum = parseInt(day, 10);
+          const monthNum = parseInt(month, 10);
+          const yearNum = parseInt(year, 10);
+
+          // Валидация компонентов даты
+          if (
+            !isNaN(dayNum) &&
+            !isNaN(monthNum) &&
+            !isNaN(yearNum) &&
+            dayNum >= 1 &&
+            dayNum <= 31 &&
+            monthNum >= 1 &&
+            monthNum <= 12 &&
+            yearNum >= 1900 &&
+            yearNum <= 2100
+          ) {
+            const dateObj = new Date(yearNum, monthNum - 1, dayNum);
+            // Проверяем что дата корректная (не переполнилась)
+            if (
+              dateObj.getFullYear() === yearNum &&
+              dateObj.getMonth() === monthNum - 1 &&
+              dateObj.getDate() === dayNum
+            ) {
+              isoDate = dateObj.toISOString();
+            }
+          }
+        }
+      }
+
+      // Формируем данные согласно документации API
+      const taskForAPI = {
+        title: taskData.title,
+        topic: taskData.topic,
+        status: taskData.status,
+        description: taskData.description || "",
+      };
+
+      // Добавляем дату только если она корректно обработана
+      if (isoDate) {
+        taskForAPI.date = isoDate;
+      }
+
+      console.log("Отправляем данные на API для обновления:", taskForAPI);
+
+      // Используем fetch с Content-Type: text/plain как в createTask
+      const token = localStorage.getItem("authToken") || API_TOKEN;
+
+      const response = await fetch(`${API_BASE_URL}/api/kanban/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "text/plain",
+        },
+        body: JSON.stringify(taskForAPI),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Ответ сервера (текст):", errorText);
+        throw new Error(
+          `HTTP error! status: ${response.status}, body: ${errorText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Ответ от API при обновлении:", data);
+
+      return data.tasks; // Возвращает обновленный список
     } catch (error) {
       console.error("Ошибка при обновлении задачи:", error);
-      throw new Error(
-        error.response?.data?.error || "Ошибка при обновлении задачи"
-      );
+      throw new Error(error.message || "Ошибка при обновлении задачи");
     }
   },
 

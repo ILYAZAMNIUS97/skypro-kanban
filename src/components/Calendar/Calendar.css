@@ -116,6 +116,23 @@
   line-height: 1;
 }
 
+/* Стили для readonly режима календаря */
+.calendar._readonly {
+  opacity: 0.8;
+}
+
+.calendar._readonly .calendar__cell._cell-day._readonly {
+  cursor: default !important;
+}
+
+.calendar._readonly .nav__action {
+  pointer-events: none;
+}
+
+.calendar._readonly .calendar__cell._cell-day:hover {
+  background-color: transparent;
+}
+
 @media screen and (max-width: 660px) {
   .calendar {
     max-width: 340px;
