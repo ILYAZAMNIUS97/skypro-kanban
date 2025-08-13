@@ -15,7 +15,7 @@ import {
   LogoutButton,
 } from "./Header.styled";
 
-function Header({ onShowExitModal }) {
+function Header({ onShowExitModal, onShowNewCardModal }) {
   const [showUserPopup, setShowUserPopup] = useState(false);
 
   const toggleUserPopup = () => {
@@ -25,6 +25,10 @@ function Header({ onShowExitModal }) {
   const handleLogoutClick = () => {
     setShowUserPopup(false); // Закрываем попап пользователя
     onShowExitModal(); // Показываем модальное окно выхода
+  };
+
+  const handleNewTaskClick = () => {
+    onShowNewCardModal(); // Показываем модальное окно создания задачи
   };
 
   return (
@@ -42,8 +46,8 @@ function Header({ onShowExitModal }) {
             </a>
           </LogoContainer>
           <HeaderNav>
-            <NewTaskButton id="btnMainNew">
-              <a href="/new-task">Создать новую задачу</a>
+            <NewTaskButton id="btnMainNew" onClick={handleNewTaskClick}>
+              Создать новую задачу
             </NewTaskButton>
             <UserButton onClick={toggleUserPopup}>Ivan Ivanov</UserButton>
             <UserPopup $isVisible={showUserPopup}>

@@ -7,9 +7,10 @@ const API_TOKEN = "bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
 // Создание экземпляра axios с базовой конфигурацией
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // Убираем Content-Type заголовок, так как API его не принимает
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 // Интерцептор для добавления токена к запросам
@@ -180,13 +181,52 @@ export const tasksApi = {
    */
   createTask: async (taskData) => {
     try {
-      const response = await api.post("/api/kanban", taskData);
-      return response.data.tasks; // Возвращает обновленный список
+      // Конвертируем дату из формата "21.08.2025" в ISO формат если указана
+      let isoDate = null;
+      if (taskData.date) {
+        const [day, month, year] = taskData.date.split(".");
+        isoDate = new Date(year, month - 1, day).toISOString();
+      }
+
+      // Формируем данные согласно документации API
+      const taskForAPI = {
+        title: taskData.title,
+        topic: taskData.topic,
+        status: taskData.status,
+        description: taskData.description || "",
+        ...(isoDate && { date: isoDate }),
+      };
+
+      console.log("Отправляем данные на API:", taskForAPI);
+
+      // Используем fetch с Content-Type: text/plain
+      const token = localStorage.getItem("authToken") || API_TOKEN;
+
+      const response = await fetch(`${API_BASE_URL}/api/kanban`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "text/plain",
+        },
+        body: JSON.stringify(taskForAPI),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Ответ сервера (текст):", errorText);
+        throw new Error(
+          `HTTP error! status: ${response.status}, body: ${errorText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Ответ от API:", data);
+
+      return data.tasks; // Возвращает обновленный список
     } catch (error) {
       console.error("Ошибка при создании задачи:", error);
-      throw new Error(
-        error.response?.data?.error || "Ошибка при создании задачи"
-      );
+
+      throw new Error(error.message || "Ошибка при создании задачи");
     }
   },
 

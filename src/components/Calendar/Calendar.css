@@ -106,7 +106,7 @@
 }
 
 ._current {
-  font-weight: 700;
+  font-weight: bold !important;
 }
 
 .subttl {

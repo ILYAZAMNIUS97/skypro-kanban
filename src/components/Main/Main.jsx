@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import Column from "../Column/Column";
 import { tasksApi } from "../../services/api";
 import { Container } from "../../App.styled";
@@ -9,27 +9,35 @@ import {
   LoadingContainer,
 } from "./Main.styled";
 
-function Main() {
+const Main = forwardRef((props, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [cards, setCards] = useState([]);
   const [error, setError] = useState("");
 
-  // Загрузка данных с API
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        setIsLoading(true);
-        setError("");
-        const tasksData = await tasksApi.getTasks();
-        setCards(tasksData);
-      } catch (err) {
-        console.error("Ошибка загрузки задач:", err);
-        setError(err.message || "Ошибка при загрузке задач");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Предоставляем методы для родительского компонента
+  useImperativeHandle(ref, () => ({
+    updateTasks: (newTasksList) => {
+      setCards(newTasksList);
+    },
+    refreshTasks: loadTasks,
+  }));
 
+  // Загрузка данных с API
+  const loadTasks = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+      const tasksData = await tasksApi.getTasks();
+      setCards(tasksData);
+    } catch (err) {
+      console.error("Ошибка загрузки задач:", err);
+      setError(err.message || "Ошибка при загрузке задач");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadTasks();
   }, []);
 
@@ -74,6 +82,8 @@ function Main() {
       </Container>
     </MainContainer>
   );
-}
+});
+
+Main.displayName = "Main";
 
 export default Main;
