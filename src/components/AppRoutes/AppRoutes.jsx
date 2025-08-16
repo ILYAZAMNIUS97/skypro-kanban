@@ -8,7 +8,7 @@ import ExitPage from "../../pages/ExitPage/ExitPage";
 import NotFoundPage from "../../pages/NotFoundPage/NotFoundPage";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
-function AppRoutes({ isAuth }) {
+function AppRoutes() {
   return (
     <Routes>
       {/* Публичные маршруты */}
@@ -19,7 +19,7 @@ function AppRoutes({ isAuth }) {
       <Route
         path="/"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <MainPage />
           </ProtectedRoute>
         }
@@ -27,7 +27,7 @@ function AppRoutes({ isAuth }) {
       <Route
         path="/card/:id"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <CardPage />
           </ProtectedRoute>
         }
@@ -35,7 +35,7 @@ function AppRoutes({ isAuth }) {
       <Route
         path="/new-task"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <NewTaskPage />
           </ProtectedRoute>
         }
@@ -43,7 +43,7 @@ function AppRoutes({ isAuth }) {
       <Route
         path="/exit"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <ExitPage />
           </ProtectedRoute>
         }

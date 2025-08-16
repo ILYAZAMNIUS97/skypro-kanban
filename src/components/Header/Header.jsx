@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import { Container } from "../../App.styled";
 import {
   HeaderContainer,
@@ -16,6 +17,7 @@ import {
 } from "./Header.styled";
 
 function Header({ onShowExitModal, onShowNewCardModal }) {
+  const { user } = useAuth();
   const [showUserPopup, setShowUserPopup] = useState(false);
 
   const toggleUserPopup = () => {
@@ -30,6 +32,10 @@ function Header({ onShowExitModal, onShowNewCardModal }) {
   const handleNewTaskClick = () => {
     onShowNewCardModal(); // Показываем модальное окно создания задачи
   };
+
+  // Получаем данные пользователя или fallback значения
+  const userName = user?.name || "Пользователь";
+  const userEmail = user?.login || user?.email || "user@example.com";
 
   return (
     <HeaderContainer>
@@ -49,10 +55,10 @@ function Header({ onShowExitModal, onShowNewCardModal }) {
             <NewTaskButton id="btnMainNew" onClick={handleNewTaskClick}>
               Создать новую задачу
             </NewTaskButton>
-            <UserButton onClick={toggleUserPopup}>Ivan Ivanov</UserButton>
+            <UserButton onClick={toggleUserPopup}>{userName}</UserButton>
             <UserPopup $isVisible={showUserPopup}>
-              <UserName>Ivan Ivanov</UserName>
-              <UserEmail>ivan.ivanov@gmail.com</UserEmail>
+              <UserName>{userName}</UserName>
+              <UserEmail>{userEmail}</UserEmail>
               <ThemeContainer>
                 <p>Темная тема</p>
                 <ThemeCheckbox name="checkbox" />
