@@ -34,11 +34,70 @@ api.interceptors.response.use(
     // Обработка ошибок авторизации
     if (error.response?.status === 401) {
       localStorage.removeItem("authToken");
-      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
+
+// Вспомогательные функции для работы с зарегистрированными пользователями
+const userStorage = {
+  /**
+   * Получение всех зарегистрированных пользователей
+   * @returns {Array} Массив пользователей
+   */
+  getUsers: () => {
+    const users = localStorage.getItem("registeredUsers");
+    return users ? JSON.parse(users) : [];
+  },
+
+  /**
+   * Сохранение списка пользователей
+   * @param {Array} users - Массив пользователей для сохранения
+   */
+  saveUsers: (users) => {
+    localStorage.setItem("registeredUsers", JSON.stringify(users));
+  },
+
+  /**
+   * Добавление нового пользователя
+   * @param {Object} user - Данные пользователя
+   */
+  addUser: (user) => {
+    const users = userStorage.getUsers();
+    users.push({
+      id: user.id,
+      name: user.name,
+      login: user.login,
+      password: user.password, // В реальном приложении пароль должен быть захеширован
+    });
+    userStorage.saveUsers(users);
+  },
+
+  /**
+   * Поиск пользователя по логину и паролю
+   * @param {string} login - Логин пользователя
+   * @param {string} password - Пароль пользователя
+   * @returns {Object|null} Найденный пользователь или null
+   */
+  findUser: (login, password) => {
+    const users = userStorage.getUsers();
+    return (
+      users.find(
+        (user) => user.login === login && user.password === password
+      ) || null
+    );
+  },
+
+  /**
+   * Проверка существования пользователя с данным логином
+   * @param {string} login - Логин для проверки
+   * @returns {boolean} true если пользователь существует
+   */
+  userExists: (login) => {
+    const users = userStorage.getUsers();
+    return users.some((user) => user.login === login);
+  },
+};
 
 // API методы для авторизации
 export const authApi = {
@@ -51,16 +110,37 @@ export const authApi = {
    */
   login: async (credentials) => {
     // ВРЕМЕННОЕ РЕШЕНИЕ: Mock авторизация пока нет документации для auth endpoints
+
+    let user = null;
+
+    // Проверяем встроенного админа
     if (credentials.login === "admin" && credentials.password === "admin") {
-      const mockUser = {
+      user = {
         id: 1,
         name: "Admin User",
         login: "admin",
         token: API_TOKEN,
       };
+    } else {
+      // Проверяем зарегистрированных пользователей
+      const foundUser = userStorage.findUser(
+        credentials.login,
+        credentials.password
+      );
+      if (foundUser) {
+        user = {
+          id: foundUser.id,
+          name: foundUser.name,
+          login: foundUser.login,
+          token: API_TOKEN,
+        };
+      }
+    }
+
+    if (user) {
       localStorage.setItem("authToken", API_TOKEN);
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      return { user: mockUser };
+      localStorage.setItem("user", JSON.stringify(user));
+      return { user };
     } else {
       throw new Error("Неверные учетные данные");
     }
@@ -90,15 +170,35 @@ export const authApi = {
    */
   register: async (userData) => {
     // ВРЕМЕННОЕ РЕШЕНИЕ: Mock регистрация пока нет документации для auth endpoints
+
+    // Проверяем, что пользователь с таким логином не существует
+    if (userStorage.userExists(userData.login) || userData.login === "admin") {
+      throw new Error("Пользователь с таким логином уже существует");
+    }
+
     const mockUser = {
       id: Date.now(),
       name: userData.name,
       login: userData.login,
+      password: userData.password, // В реальном приложении пароль должен быть захеширован
       token: API_TOKEN,
     };
+
+    // Сохраняем пользователя в список зарегистрированных
+    userStorage.addUser(mockUser);
+
+    // Устанавливаем авторизацию для нового пользователя
+    const userForStorage = {
+      id: mockUser.id,
+      name: mockUser.name,
+      login: mockUser.login,
+      token: API_TOKEN,
+    };
+
     localStorage.setItem("authToken", API_TOKEN);
-    localStorage.setItem("user", JSON.stringify(mockUser));
-    return { user: mockUser };
+    localStorage.setItem("user", JSON.stringify(userForStorage));
+
+    return { user: userForStorage };
 
     // Когда будет документация для регистрации, раскомментируйте:
     // try {
