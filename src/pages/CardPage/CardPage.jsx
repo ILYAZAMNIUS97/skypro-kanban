@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { tasksApi } from "../../services/api";
+import { useTasks } from "../../contexts/TasksContext";
 import Header from "../../components/Header/Header";
 import PopUser from "../../components/popups/PopUser/PopUser";
 import { Wrapper } from "../../App.styled";
@@ -17,20 +17,23 @@ import {
 function CardPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getTask, clearError } = useTasks();
   const [card, setCard] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
 
   useEffect(() => {
     const loadCard = async () => {
       try {
         setIsLoading(true);
-        setError("");
-        const cardData = await tasksApi.getTask(id);
+        setLocalError("");
+        clearError(); // Очищаем глобальные ошибки
+        const cardData = await getTask(id);
         setCard(cardData);
       } catch (err) {
         console.error("Ошибка загрузки карточки:", err);
-        setError(err.message || "Карточка не найдена");
+        const errorMessage = err.message || "Карточка не найдена";
+        setLocalError(errorMessage);
         // Перенаправляем на 404 если карточка не найдена
         if (err.response?.status === 404) {
           navigate("/not-found");
@@ -43,7 +46,7 @@ function CardPage() {
     if (id) {
       loadCard();
     }
-  }, [id, navigate]);
+  }, [id, navigate, getTask, clearError]);
 
   const handleBack = () => {
     navigate("/");
@@ -53,8 +56,8 @@ function CardPage() {
     return <div>Загрузка...</div>;
   }
 
-  if (error) {
-    return <div>Ошибка: {error}</div>;
+  if (localError) {
+    return <div>Ошибка: {localError}</div>;
   }
 
   if (!card) {

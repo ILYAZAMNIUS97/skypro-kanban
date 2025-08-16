@@ -4,10 +4,8 @@ import Calendar from "../../Calendar/Calendar";
 import "./PopBrowse.css";
 
 function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
-  const { updateTask, deleteTask } = useTasks();
+  const { updateTask, deleteTask, isLoading, error, clearError } = useTasks();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   // Состояния для редактирования
   const [editTitle, setEditTitle] = useState("");
@@ -62,9 +60,9 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       setEditDate(safeDate);
 
       setIsEditMode(false);
-      setError("");
+      clearError();
     }
-  }, [isVisible, card]);
+  }, [isVisible, card, clearError]);
 
   // Закрытие по Escape обработано в MainPage
   const handleOverlayClick = (e) => {
@@ -75,13 +73,13 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
 
   const handleClose = () => {
     setIsEditMode(false);
-    setError("");
+    clearError();
     onClose();
   };
 
   const handleEditModeToggle = () => {
     setIsEditMode(!isEditMode);
-    setError("");
+    clearError();
 
     // Если выходим из режима редактирования, сбрасываем изменения
     if (isEditMode) {
@@ -95,7 +93,6 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
 
   const handleSave = async () => {
     if (!card?._id) {
-      setError("Ошибка: ID задачи не найден");
       return;
     }
 
@@ -104,10 +101,9 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-
     try {
+      clearError();
+
       const updatedData = {
         title: editTitle || card.title,
         description: editDescription || "",
@@ -126,15 +122,12 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       }
     } catch (err) {
       console.error("Ошибка при обновлении задачи:", err);
-      setError(err.message || "Ошибка при сохранении изменений");
-    } finally {
-      setIsLoading(false);
+      // Ошибка уже обработана в контексте
     }
   };
 
   const handleDelete = async () => {
     if (!card?._id) {
-      setError("Ошибка: ID задачи не найден");
       return;
     }
 
@@ -142,10 +135,9 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-
     try {
+      clearError();
+
       const updatedTasks = await deleteTask(card._id);
       console.log("Задача удалена:", updatedTasks);
 
@@ -154,9 +146,7 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       }
     } catch (err) {
       console.error("Ошибка при удалении задачи:", err);
-      setError(err.message || "Ошибка при удалении задачи");
-    } finally {
-      setIsLoading(false);
+      // Ошибка уже обработана в контексте
     }
   };
 

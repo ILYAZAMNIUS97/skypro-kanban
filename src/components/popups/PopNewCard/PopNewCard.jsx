@@ -4,7 +4,7 @@ import Calendar from "../../Calendar/Calendar";
 import { useTasks } from "../../../contexts/TasksContext";
 
 function PopNewCard({ isVisible, onClose, onTaskCreated }) {
-  const { createTask } = useTasks();
+  const { createTask, isLoading, error, clearError } = useTasks();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -13,8 +13,6 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
   });
 
   const [selectedCategory, setSelectedCategory] = useState("Web Design");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const categories = [
     { name: "Web Design", className: "_orange" },
@@ -29,7 +27,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
       [name]: value,
     }));
     // Очищаем ошибку при изменении формы
-    if (error) setError("");
+    if (error) clearError();
   };
 
   const handleCategorySelect = (categoryName) => {
@@ -51,14 +49,12 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      setError("Название задачи обязательно для заполнения");
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-
     try {
+      clearError();
+
       // Подготавливаем данные для отправки на API
       const taskData = {
         title: formData.title.trim(),
@@ -82,9 +78,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
       handleClose();
     } catch (error) {
       console.error("Ошибка при создании задачи:", error);
-      setError(error.message || "Произошла ошибка при создании задачи");
-    } finally {
-      setIsLoading(false);
+      // Ошибка уже обработана в контексте
     }
   };
 
@@ -97,8 +91,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
       date: "",
     });
     setSelectedCategory("Web Design");
-    setError("");
-    setIsLoading(false);
+    clearError();
     onClose();
   };
 
