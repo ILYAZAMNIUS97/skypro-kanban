@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authApi } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   PageWrapper,
   AuthContainer,
@@ -17,7 +17,8 @@ import {
   HelpText,
 } from "./RegisterPage.styled";
 
-function RegisterPage({ onLogin }) {
+function RegisterPage() {
+  const { register: authRegister } = useAuth();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -144,15 +145,14 @@ function RegisterPage({ onLogin }) {
     setAuthError("");
 
     try {
-      // Выполняем API запрос для регистрации
-      await authApi.register({
+      // Выполняем регистрацию через контекст
+      await authRegister({
         name: name,
         login: login,
         password: password,
       });
 
-      // Успешная регистрация
-      onLogin();
+      // Успешная регистрация - переходим на главную страницу
       navigate("/");
     } catch (error) {
       // Обработка ошибок регистрации

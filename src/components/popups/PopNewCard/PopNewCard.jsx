@@ -1,9 +1,10 @@
 import { useState } from "react";
 import "./PopNewCard.css";
 import Calendar from "../../Calendar/Calendar";
-import { tasksApi } from "../../../services/api";
+import { useTasks } from "../../../contexts/TasksContext";
 
 function PopNewCard({ isVisible, onClose, onTaskCreated }) {
+  const { createTask } = useTasks();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -67,12 +68,12 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
         date: formData.date || null,
       };
 
-      // Отправляем запрос на создание задачи
-      const result = await tasksApi.createTask(taskData);
+      // Отправляем запрос на создание задачи через контекст
+      const result = await createTask(taskData);
 
       console.log("Задача успешно создана:", result);
 
-      // Вызываем callback для обновления списка задач если он передан
+      // Вызываем callback для обновления UI если он передан
       if (onTaskCreated) {
         onTaskCreated(result);
       }
@@ -113,7 +114,10 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
   }
 
   return (
-    <div className="pop-new-card" id="popNewCard">
+    <div
+      className={`pop-new-card ${isVisible ? "_visible" : ""}`}
+      id="popNewCard"
+    >
       <div className="pop-new-card__container" onClick={handleOverlayClick}>
         <div className="pop-new-card__block">
           <div className="pop-new-card__content">

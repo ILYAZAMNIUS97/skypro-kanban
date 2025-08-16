@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authApi } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   PageWrapper,
   AuthContainer,
@@ -17,7 +17,8 @@ import {
   HelpText,
 } from "./LoginPage.styled";
 
-function LoginPage({ onLogin }) {
+function LoginPage() {
+  const { login: authLogin } = useAuth();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -91,14 +92,13 @@ function LoginPage({ onLogin }) {
     setAuthError("");
 
     try {
-      // Выполняем API запрос для авторизации
-      await authApi.login({
+      // Выполняем авторизацию через контекст
+      await authLogin({
         login: login,
         password: password,
       });
 
-      // Успешная авторизация
-      onLogin();
+      // Успешная авторизация - переходим на главную страницу
       navigate("/");
     } catch (error) {
       // Обработка ошибок авторизации

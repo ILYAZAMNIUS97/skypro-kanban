@@ -1,32 +1,14 @@
-import { useState, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { authApi } from "./services/api";
+import AppProviders from "./contexts/AppProviders";
 import AppRoutes from "./components/AppRoutes/AppRoutes";
+import { useAuth } from "./contexts/AuthContext";
 import { GlobalStyle } from "./App.styled";
 
-function App() {
-  const [isAuth, setIsAuth] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Проверяем авторизацию при загрузке приложения
-  useEffect(() => {
-    const checkAuth = () => {
-      const isAuthenticated = authApi.isAuthenticated();
-      setIsAuth(isAuthenticated);
-      setIsLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  const handleLogin = () => {
-    setIsAuth(true);
-  };
-
-  const handleLogout = () => {
-    authApi.logout(); // Очищаем localStorage
-    setIsAuth(false);
-  };
+/**
+ * Главный компонент приложения с роутингом
+ */
+const AppContent = () => {
+  const { isAuth, isLoading } = useAuth();
 
   // Показываем загрузку пока проверяем авторизацию
   if (isLoading) {
@@ -37,13 +19,20 @@ function App() {
     <>
       <GlobalStyle />
       <BrowserRouter>
-        <AppRoutes
-          isAuth={isAuth}
-          onLogin={handleLogin}
-          onLogout={handleLogout}
-        />
+        <AppRoutes isAuth={isAuth} />
       </BrowserRouter>
     </>
+  );
+};
+
+/**
+ * Корневой компонент приложения с провайдерами контекстов
+ */
+function App() {
+  return (
+    <AppProviders>
+      <AppContent />
+    </AppProviders>
   );
 }
 

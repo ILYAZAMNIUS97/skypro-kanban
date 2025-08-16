@@ -8,6 +8,14 @@
   top: 0;
   left: 0;
   z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.pop-new-card._visible {
+  opacity: 1;
+  visibility: visible;
 }
 .pop-new-card__container {
   width: 100%;
@@ -30,6 +38,12 @@
   border-radius: 10px;
   border: 0.7px solid #d4dbe5;
   position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.pop-new-card._visible .pop-new-card__block {
+  transform: scale(1);
 }
 .pop-new-card__content {
   display: block;

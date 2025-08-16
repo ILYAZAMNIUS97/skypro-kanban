@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { tasksApi } from "../../../services/api";
+import { useTasks } from "../../../contexts/TasksContext";
 import Calendar from "../../Calendar/Calendar";
 import "./PopBrowse.css";
 
 function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
+  const { updateTask, deleteTask } = useTasks();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -117,7 +118,7 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
 
       console.log("Отправляем данные для обновления:", updatedData);
 
-      const updatedTasks = await tasksApi.updateTask(card._id, updatedData);
+      const updatedTasks = await updateTask(card._id, updatedData);
       console.log("Задача обновлена:", updatedTasks);
 
       if (onTaskUpdated) {
@@ -145,7 +146,7 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
     setError("");
 
     try {
-      const updatedTasks = await tasksApi.deleteTask(card._id);
+      const updatedTasks = await deleteTask(card._id);
       console.log("Задача удалена:", updatedTasks);
 
       if (onTaskDeleted) {
@@ -240,7 +241,7 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
   }
 
   return (
-    <div className="pop-browse" style={{ display: "block" }}>
+    <div className={`pop-browse ${isVisible ? "_visible" : ""}`}>
       <div className="pop-browse__container" onClick={handleOverlayClick}>
         <div className="pop-browse__block">
           <div className="pop-browse__content">

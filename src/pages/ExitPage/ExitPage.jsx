@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   PageWrapper,
   ExitContainer,
@@ -11,11 +12,12 @@ import {
   ExitButtonNo,
 } from "./ExitPage.styled";
 
-function ExitPage({ onLogout }) {
+function ExitPage() {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleExit = () => {
-    onLogout();
+    logout();
     navigate("/login");
   };
 

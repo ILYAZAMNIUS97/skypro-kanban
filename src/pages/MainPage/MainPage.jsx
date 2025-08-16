@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import Header from "../../components/Header/Header";
 import Main from "../../components/Main/Main";
 import PopNewCard from "../../components/popups/PopNewCard/PopNewCard";
@@ -17,15 +18,13 @@ import {
   ExitButtonNo,
 } from "../ExitPage/ExitPage.styled";
 
-function MainPage({ onLogout }) {
+function MainPage() {
+  const { logout } = useAuth();
   const [showExitModal, setShowExitModal] = useState(false);
   const [showNewCardModal, setShowNewCardModal] = useState(false);
   const [showBrowseModal, setShowBrowseModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const navigate = useNavigate();
-
-  // Реф для доступа к методу обновления задач в Main компоненте
-  const mainRef = useRef();
 
   // Закрытие модального окна по клавише Escape
   useEffect(() => {
@@ -88,30 +87,16 @@ function MainPage({ onLogout }) {
     setSelectedCard(null);
   };
 
-  const handleTaskCreated = (newTasksList) => {
-    console.log("Новая задача создана:", newTasksList);
-    // Обновляем список задач в Main компоненте
-    if (mainRef.current && mainRef.current.updateTasks) {
-      mainRef.current.updateTasks(newTasksList);
-    }
+  const handleTaskCreated = () => {
+    setShowNewCardModal(false);
   };
 
-  const handleTaskUpdated = (updatedTasksList) => {
-    console.log("Задача обновлена:", updatedTasksList);
-    // Обновляем список задач в Main компоненте
-    if (mainRef.current && mainRef.current.updateTasks) {
-      mainRef.current.updateTasks(updatedTasksList);
-    }
+  const handleTaskUpdated = () => {
     setShowBrowseModal(false);
     setSelectedCard(null);
   };
 
-  const handleTaskDeleted = (updatedTasksList) => {
-    console.log("Задача удалена:", updatedTasksList);
-    // Обновляем список задач в Main компоненте
-    if (mainRef.current && mainRef.current.updateTasks) {
-      mainRef.current.updateTasks(updatedTasksList);
-    }
+  const handleTaskDeleted = () => {
     setShowBrowseModal(false);
     setSelectedCard(null);
   };
@@ -124,7 +109,7 @@ function MainPage({ onLogout }) {
   };
 
   const handleExit = () => {
-    onLogout();
+    logout();
     navigate("/login");
   };
 
@@ -147,7 +132,7 @@ function MainPage({ onLogout }) {
         onShowExitModal={handleShowExitModal}
         onShowNewCardModal={handleShowNewCardModal}
       />
-      <Main ref={mainRef} onCardClick={handleShowBrowseModal} />
+      <Main onCardClick={handleShowBrowseModal} />
 
       {showExitModal && (
         <ExitContainer onClick={handleOverlayClick}>
