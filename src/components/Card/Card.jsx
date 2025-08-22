@@ -9,7 +9,7 @@ import {
   CardDate,
 } from "./Card.styled";
 
-function CardComponent({ topic, title, date }) {
+function CardComponent({ topic, title, date, cardData, onCardClick }) {
   // Определяем тему карточки на основе topic
   const getTheme = (topic) => {
     switch (topic) {
@@ -26,25 +26,33 @@ function CardComponent({ topic, title, date }) {
 
   const { theme, themeText } = getTheme(topic);
 
+  const handleCardClick = (e) => {
+    e.preventDefault();
+    if (onCardClick && cardData) {
+      onCardClick(cardData);
+    }
+  };
+
+  const handleMenuClick = (e) => {
+    e.stopPropagation();
+    // Здесь можно добавить функционал меню карточки в будущем
+  };
+
   return (
     <CardItem>
-      <Card>
+      <Card onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <CardGroup>
           <CardTheme className={theme}>
             <p>{themeText}</p>
           </CardTheme>
-          <a href="#popBrowse" target="_self">
-            <CardButton>
-              <div></div>
-              <div></div>
-              <div></div>
-            </CardButton>
-          </a>
+          <CardButton onClick={handleMenuClick}>
+            <div></div>
+            <div></div>
+            <div></div>
+          </CardButton>
         </CardGroup>
         <CardContent>
-          <a href="" target="_blank">
-            <CardTitle>{title}</CardTitle>
-          </a>
+          <CardTitle>{title}</CardTitle>
           <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"

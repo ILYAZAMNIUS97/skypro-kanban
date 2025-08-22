@@ -4,10 +4,13 @@
   height: 100%;
   min-width: 375px;
   min-height: 100vh;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 7;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 .pop-browse__container {
   width: 100%;
@@ -30,6 +33,12 @@
   border-radius: 10px;
   border: 0.7px solid #d4dbe5;
   position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.pop-browse._visible .pop-browse__block {
+  transform: scale(1);
 }
 .pop-browse__content {
   display: block;
@@ -244,6 +253,14 @@
 
 .pop-browse:target {
   display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.pop-browse._visible {
+  display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
 @media screen and (max-width: 660px) {
@@ -297,5 +314,114 @@
   }
   .form-browse__area {
     height: 37px;
+  }
+}
+
+._selected {
+  background-color: #94a6be !important;
+  color: #ffffff !important;
+}
+
+._disabled {
+  cursor: default !important;
+}
+
+.status__theme._selected p {
+  color: #ffffff !important;
+}
+
+.form-browse__area:not([readonly]) {
+  background-color: #ffffff !important;
+  border: 1px solid #94a6be;
+}
+
+.form-browse__area[readonly] {
+  background-color: #eaeef6;
+  cursor: default;
+}
+
+/* Стили для кнопок в режиме загрузки */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Стили для поля ввода заголовка в режиме редактирования */
+.pop-browse__ttl input {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  width: 100% !important;
+  border-bottom: 1px solid #94a6be !important;
+  padding-bottom: 2px;
+}
+
+.pop-browse__ttl input:focus {
+  border-bottom: 2px solid #94a6be !important;
+}
+
+/* Дополнительные стили для улучшения интерфейса */
+.status__theme {
+  transition: all 0.2s ease;
+}
+
+.status__theme:hover:not(._disabled) {
+  border-color: #94a6be;
+  transform: translateY(-1px);
+}
+
+.status__theme._selected {
+  box-shadow: 0 2px 4px rgba(148, 166, 190, 0.3);
+}
+
+/* Анимация для кнопок */
+.pop-browse__btn-browse button,
+.pop-browse__btn-edit button {
+  transition: all 0.2s ease;
+}
+
+.pop-browse__btn-browse button:hover:not(:disabled),
+.pop-browse__btn-edit button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для загрузки */
+.pop-browse__loading {
+  text-align: center;
+  color: #94a6be;
+  font-style: italic;
+}
+
+/* Стили для ошибок */
+.pop-browse__error {
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Улучшение отображения readonly элементов */
+.form-browse__area[readonly] {
+  color: #666;
+  resize: none;
+}
+
+.pop-browse__ttl input {
+  transition: border-bottom-color 0.2s ease;
+}
+
+/* Responsive стили */
+@media screen and (max-width: 660px) {
+  .pop-browse__btn-browse button,
+  .pop-browse__btn-edit button {
+    font-size: 14px;
+    padding: 0 12px;
+  }
+
+  .status__theme {
+    margin-bottom: 5px;
   }
 }

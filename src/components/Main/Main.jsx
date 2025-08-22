@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Column from "../Column/Column";
-import { cardList } from "../../../data.js";
+import { useTasks } from "../../contexts/TasksContext";
 import { Container } from "../../App.styled";
 import {
   MainContainer,
@@ -9,35 +9,14 @@ import {
   LoadingContainer,
 } from "./Main.styled";
 
-function Main() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [cards, setCards] = useState([]);
+const Main = ({ onCardClick }) => {
+  const { isLoading, error, loadTasks, getGroupedTasks } = useTasks();
 
-  // Имитация загрузки данных
   useEffect(() => {
-    setTimeout(() => {
-      setCards(cardList);
-      setIsLoading(false);
-    }, 2000); // 2 секунды задержки
-  }, []);
+    loadTasks();
+  }, [loadTasks]);
 
-  // Группировка карточек по статусам
-  const groupCardsByStatus = (cards) => {
-    const statuses = [
-      "Без статуса",
-      "Нужно сделать",
-      "В работе",
-      "Тестирование",
-      "Готово",
-    ];
-
-    return statuses.map((status) => ({
-      title: status,
-      cards: cards.filter((card) => card.status === status),
-    }));
-  };
-
-  const columns = groupCardsByStatus(cards);
+  const columns = getGroupedTasks();
 
   return (
     <MainContainer>
@@ -48,9 +27,18 @@ function Main() {
               <LoadingContainer>
                 <p>Данные загружаются...</p>
               </LoadingContainer>
+            ) : error ? (
+              <LoadingContainer>
+                <p style={{ color: "red" }}>Ошибка: {error}</p>
+              </LoadingContainer>
             ) : (
               columns.map((column, index) => (
-                <Column key={index} title={column.title} cards={column.cards} />
+                <Column
+                  key={index}
+                  title={column.title}
+                  cards={column.cards}
+                  onCardClick={onCardClick}
+                />
               ))
             )}
           </MainContent>
@@ -58,6 +46,6 @@ function Main() {
       </Container>
     </MainContainer>
   );
-}
+};
 
 export default Main;

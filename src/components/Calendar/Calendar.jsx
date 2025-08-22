@@ -1,29 +1,203 @@
+import { useState, useEffect } from "react";
 import "./Calendar.css";
 
-function Calendar({ selectedDate = "09.09.23", showPeriod = false }) {
+function Calendar({
+  selectedDate = "",
+  onDateSelect,
+  showPeriod = false,
+  readOnly = false,
+}) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  // Получаем текущую дату
+  const today = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  // Названия месяцев
+  const monthNames = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+
+  // Получаем первый день месяца и количество дней в месяце
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+  const daysInMonth = lastDayOfMonth.getDate();
+  const startingDayOfWeek = firstDayOfMonth.getDay();
+
+  // Корректируем стартовый день (понедельник = 0)
+  const startingDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
+
+  // Получаем дни предыдущего месяца
+  const prevMonth = new Date(currentYear, currentMonth - 1, 0);
+  const daysInPrevMonth = prevMonth.getDate();
+
+  const handlePrevMonth = () => {
+    if (!readOnly) {
+      setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (!readOnly) {
+      setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
+    }
+  };
+
+  const handleDayClick = (day) => {
+    if (!readOnly) {
+      setSelectedDay(day);
+      const formattedDate = `${day.toString().padStart(2, "0")}.${(
+        currentMonth + 1
+      )
+        .toString()
+        .padStart(2, "0")}.${currentYear}`;
+      if (onDateSelect) {
+        onDateSelect(formattedDate);
+      }
+    }
+  };
+
+  const isToday = (day) => {
+    return (
+      today.getDate() === day &&
+      today.getMonth() === currentMonth &&
+      today.getFullYear() === currentYear
+    );
+  };
+
+  const isSelectedDay = (day) => {
+    return selectedDay === day;
+  };
+
+  // Генерируем дни календаря
+  const generateCalendarDays = () => {
+    const days = [];
+
+    // Дни предыдущего месяца
+    for (let i = startingDay - 1; i >= 0; i--) {
+      days.push(
+        <div
+          key={`prev-${daysInPrevMonth - i}`}
+          className="calendar__cell _other-month"
+        >
+          {daysInPrevMonth - i}
+        </div>
+      );
+    }
+
+    // Дни текущего месяца
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayOfWeek = (startingDay + day - 1) % 7;
+      const isWeekend = dayOfWeek === 5 || dayOfWeek === 6; // Суббота и воскресенье
+
+      let className = "calendar__cell _cell-day";
+      if (isWeekend) className += " _weekend";
+      if (isToday(day)) className += " _current";
+      if (isSelectedDay(day)) className += " _active-day";
+      if (readOnly) className += " _readonly";
+
+      days.push(
+        <div
+          key={day}
+          className={className}
+          onClick={() => handleDayClick(day)}
+          style={{ cursor: readOnly ? "default" : "pointer" }}
+        >
+          {day}
+        </div>
+      );
+    }
+
+    // Дни следующего месяца для заполнения сетки
+    const totalCells = Math.ceil((startingDay + daysInMonth) / 7) * 7;
+    const remainingCells = totalCells - (startingDay + daysInMonth);
+
+    for (let day = 1; day <= remainingCells; day++) {
+      days.push(
+        <div key={`next-${day}`} className="calendar__cell _other-month">
+          {day}
+        </div>
+      );
+    }
+
+    return days;
+  };
+
+  useEffect(() => {
+    // Если selectedDate изменился извне, обновляем selectedDay и месяц календаря
+    if (selectedDate) {
+      const [day, month, year] = selectedDate.split(".");
+      const dayNum = parseInt(day, 10);
+      const monthNum = parseInt(month, 10) - 1;
+      const yearNum = parseInt(year, 10);
+
+      setSelectedDay(dayNum);
+      setCurrentDate(new Date(yearNum, monthNum, 1));
+    } else {
+      setSelectedDay(null);
+    }
+  }, [selectedDate]);
+
   return (
-    <div className="pop-new-card__calendar calendar">
+    <div
+      className={`pop-new-card__calendar calendar ${
+        readOnly ? "_readonly" : ""
+      }`}
+    >
       <p className="calendar__ttl subttl">Даты</p>
       <div className="calendar__block">
         <div className="calendar__nav">
-          <div className="calendar__month">Сентябрь 2023</div>
+          <div className="calendar__month">
+            {monthNames[currentMonth]} {currentYear}
+          </div>
           <div className="nav__actions">
-            <div className="nav__action" data-action="prev">
+            <div
+              className="nav__action"
+              data-action="prev"
+              onClick={handlePrevMonth}
+              style={{
+                cursor: readOnly ? "default" : "pointer",
+                opacity: readOnly ? 0.5 : 1,
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="6"
                 height="11"
                 viewBox="0 0 6 11"
+                style={{ cursor: readOnly ? "default" : "pointer" }}
               >
                 <path d="M5.72945 1.95273C6.09018 1.62041 6.09018 1.0833 5.72945 0.750969C5.36622 0.416344 4.7754 0.416344 4.41218 0.750969L0.528487 4.32883C-0.176162 4.97799 -0.176162 6.02201 0.528487 6.67117L4.41217 10.249C4.7754 10.5837 5.36622 10.5837 5.72945 10.249C6.09018 9.9167 6.09018 9.37959 5.72945 9.04727L1.87897 5.5L5.72945 1.95273Z" />
               </svg>
             </div>
-            <div className="nav__action" data-action="next">
+            <div
+              className="nav__action"
+              data-action="next"
+              onClick={handleNextMonth}
+              style={{
+                cursor: readOnly ? "default" : "pointer",
+                opacity: readOnly ? 0.5 : 1,
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="6"
                 height="11"
                 viewBox="0 0 6 11"
+                style={{ cursor: readOnly ? "default" : "pointer" }}
               >
                 <path d="M0.27055 9.04727C-0.0901833 9.37959 -0.0901832 9.9167 0.27055 10.249C0.633779 10.5837 1.2246 10.5837 1.58783 10.249L5.47151 6.67117C6.17616 6.02201 6.17616 4.97799 5.47151 4.32883L1.58782 0.75097C1.2246 0.416344 0.633778 0.416344 0.270549 0.75097C-0.0901831 1.0833 -0.090184 1.62041 0.270549 1.95273L4.12103 5.5L0.27055 9.04727Z" />
               </svg>
@@ -40,53 +214,17 @@ function Calendar({ selectedDate = "09.09.23", showPeriod = false }) {
             <div className="calendar__day-name -weekend-">сб</div>
             <div className="calendar__day-name -weekend-">вс</div>
           </div>
-          <div className="calendar__cells">
-            <div className="calendar__cell _other-month">28</div>
-            <div className="calendar__cell _other-month">29</div>
-            <div className="calendar__cell _other-month">30</div>
-            <div className="calendar__cell _cell-day">31</div>
-            <div className="calendar__cell _cell-day">1</div>
-            <div className="calendar__cell _cell-day _weekend">2</div>
-            <div className="calendar__cell _cell-day _weekend">3</div>
-            <div className="calendar__cell _cell-day">4</div>
-            <div className="calendar__cell _cell-day">5</div>
-            <div className="calendar__cell _cell-day ">6</div>
-            <div className="calendar__cell _cell-day">7</div>
-            <div className="calendar__cell _cell-day _current">8</div>
-            <div className="calendar__cell _cell-day _weekend _active-day">
-              9
-            </div>
-            <div className="calendar__cell _cell-day _weekend">10</div>
-            <div className="calendar__cell _cell-day">11</div>
-            <div className="calendar__cell _cell-day">12</div>
-            <div className="calendar__cell _cell-day">13</div>
-            <div className="calendar__cell _cell-day">14</div>
-            <div className="calendar__cell _cell-day">15</div>
-            <div className="calendar__cell _cell-day _weekend">16</div>
-            <div className="calendar__cell _cell-day _weekend">17</div>
-            <div className="calendar__cell _cell-day">18</div>
-            <div className="calendar__cell _cell-day">19</div>
-            <div className="calendar__cell _cell-day">20</div>
-            <div className="calendar__cell _cell-day">21</div>
-            <div className="calendar__cell _cell-day">22</div>
-            <div className="calendar__cell _cell-day _weekend">23</div>
-            <div className="calendar__cell _cell-day _weekend">24</div>
-            <div className="calendar__cell _cell-day">25</div>
-            <div className="calendar__cell _cell-day">26</div>
-            <div className="calendar__cell _cell-day">27</div>
-            <div className="calendar__cell _cell-day">28</div>
-            <div className="calendar__cell _cell-day">29</div>
-            <div className="calendar__cell _cell-day _weekend">30</div>
-            <div className="calendar__cell _other-month _weekend">1</div>
-          </div>
+          <div className="calendar__cells">{generateCalendarDays()}</div>
         </div>
 
-        <input type="hidden" id="datepick_value" defaultValue="08.09.2023" />
+        <input type="hidden" id="datepick_value" value={selectedDate} />
         <div className="calendar__period">
           <p className="calendar__p date-end">
-            {showPeriod ? `Срок исполнения: ` : "Выберите срок исполнения "}
+            {showPeriod && selectedDate
+              ? `Срок исполнения: `
+              : "Выберите срок исполнения"}
             <span className="date-control">
-              {showPeriod ? selectedDate : ""}
+              {showPeriod && selectedDate ? selectedDate : ""}
             </span>
             {!showPeriod && "."}
           </p>
