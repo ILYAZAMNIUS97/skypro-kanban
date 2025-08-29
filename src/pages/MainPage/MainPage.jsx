@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Header from "../../components/Header/Header";
 import Main from "../../components/Main/Main";
+import StatsDashboard from "../../components/StatsDashboard/StatsDashboard";
 import PopNewCard from "../../components/popups/PopNewCard/PopNewCard";
 import PopBrowse from "../../components/popups/PopBrowse/PopBrowse";
 import PopUser from "../../components/popups/PopUser/PopUser";
-import { Wrapper } from "../../App.styled";
+import { Wrapper, Container } from "../../App.styled";
 import {
   ExitContainer,
   ExitModal,
@@ -17,6 +18,7 @@ import {
   ExitButtonYes,
   ExitButtonNo,
 } from "../ExitPage/ExitPage.styled";
+import { StatsToggleButton, StatsSection } from "./MainPage.styled";
 
 function MainPage() {
   const { logout } = useAuth();
@@ -24,7 +26,24 @@ function MainPage() {
   const [showNewCardModal, setShowNewCardModal] = useState(false);
   const [showBrowseModal, setShowBrowseModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+
+  // Состояния для поиска, фильтрации и сортировки
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedSort, setSelectedSort] = useState("");
+
+  // Состояние для статистики
+  const [showStats, setShowStats] = useState(() => {
+    const savedState = localStorage.getItem("showStats");
+    return savedState ? JSON.parse(savedState) : true;
+  });
+
   const navigate = useNavigate();
+
+  // Сохраняем состояние статистики в localStorage
+  useEffect(() => {
+    localStorage.setItem("showStats", JSON.stringify(showStats));
+  }, [showStats]);
 
   // Закрытие модального окна по клавише Escape
   useEffect(() => {
@@ -113,6 +132,23 @@ function MainPage() {
     navigate("/login");
   };
 
+  // Обработчики поиска, фильтрации и сортировки
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleFilter = (filter) => {
+    setSelectedFilter(filter);
+  };
+
+  const handleSort = (sort) => {
+    setSelectedSort(sort);
+  };
+
+  const toggleStats = () => {
+    setShowStats(!showStats);
+  };
+
   return (
     <Wrapper>
       <PopUser />
@@ -131,8 +167,29 @@ function MainPage() {
       <Header
         onShowExitModal={handleShowExitModal}
         onShowNewCardModal={handleShowNewCardModal}
+        onSearch={handleSearch}
+        onFilter={handleFilter}
+        onSort={handleSort}
+        searchQuery={searchQuery}
+        selectedFilter={selectedFilter}
+        selectedSort={selectedSort}
       />
-      <Main onCardClick={handleShowBrowseModal} />
+
+      <Container>
+        <StatsSection>
+          <StatsToggleButton onClick={toggleStats}>
+            {showStats ? "🔽 Скрыть статистику" : "▶️ Показать статистику"}
+          </StatsToggleButton>
+          {showStats && <StatsDashboard />}
+        </StatsSection>
+      </Container>
+
+      <Main
+        onCardClick={handleShowBrowseModal}
+        searchQuery={searchQuery}
+        selectedFilter={selectedFilter}
+        selectedSort={selectedSort}
+      />
 
       {showExitModal && (
         <ExitContainer onClick={handleOverlayClick}>
