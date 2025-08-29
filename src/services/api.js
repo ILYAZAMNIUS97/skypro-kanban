@@ -246,17 +246,14 @@ export const tasksApi = {
    * @returns {Promise} Список задач
    */
   getTasks: async () => {
-    // ВРЕМЕННО: возвращаем пустой массив для тестирования EmptyState
-    return [];
-
-    // try {
-    //   const response = await api.get("/api/kanban");
-    //   return response.data.tasks || [];
-    // } catch (error) {
-    //   throw new Error(
-    //     error.response?.data?.error || "Ошибка при загрузке задач"
-    //   );
-    // }
+    try {
+      const response = await api.get("/api/kanban");
+      return response.data.tasks || [];
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.error || "Ошибка при загрузке задач"
+      );
+    }
   },
 
   /**
