@@ -10,6 +10,13 @@ import {
   LoadingContainer,
 } from "./Main.styled";
 
+// Компонент пустого состояния
+const EmptyState = () => (
+  <LoadingContainer>
+    <p>Новых задач нет</p>
+  </LoadingContainer>
+);
+
 const Main = ({ onCardClick }) => {
   const { isLoading, error, loadTasks, getGroupedTasks } = useTasks();
 
@@ -18,6 +25,9 @@ const Main = ({ onCardClick }) => {
   }, [loadTasks]);
 
   const columns = getGroupedTasks();
+
+  // Проверяем, есть ли хотя бы одна задача во всех колонках
+  const hasAnyTasks = columns.some((column) => column.cards.length > 0);
 
   return (
     <MainContainer>
@@ -30,6 +40,8 @@ const Main = ({ onCardClick }) => {
               <LoadingContainer>
                 <p style={{ color: "red" }}>Ошибка: {error}</p>
               </LoadingContainer>
+            ) : !hasAnyTasks ? (
+              <EmptyState />
             ) : (
               columns.map((column, index) => (
                 <Column
