@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import Column from "../Column/Column";
+import Loader from "../Loader/Loader";
 import { useTasks } from "../../contexts/useTasks";
 import { Container } from "../../App.styled";
 import {
@@ -24,9 +25,7 @@ const Main = ({ onCardClick }) => {
         <MainBlock>
           <MainContent>
             {isLoading ? (
-              <LoadingContainer>
-                <p>Данные загружаются...</p>
-              </LoadingContainer>
+              <Loader />
             ) : error ? (
               <LoadingContainer>
                 <p style={{ color: "red" }}>Ошибка: {error}</p>
