@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { generalNotifications } from "../../services/toastNotifications";
 import {
   PageWrapper,
   AuthContainer,
@@ -138,6 +139,7 @@ function RegisterPage() {
     e.preventDefault();
 
     if (!validateForm()) {
+      generalNotifications.validationError("Заполните все поля корректно");
       return;
     }
 

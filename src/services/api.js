@@ -1,4 +1,9 @@
 import axios from "axios";
+import {
+  authNotifications,
+  taskNotifications,
+  generalNotifications,
+} from "./toastNotifications";
 
 // Базовая конфигурация API
 const API_BASE_URL = "https://wedev-api.sky.pro";
@@ -34,6 +39,11 @@ api.interceptors.response.use(
     // Обработка ошибок авторизации
     if (error.response?.status === 401) {
       localStorage.removeItem("authToken");
+      authNotifications.sessionExpired();
+    } else if (error.response?.status >= 500) {
+      generalNotifications.serverError();
+    } else if (!navigator.onLine) {
+      generalNotifications.networkError();
     }
     return Promise.reject(error);
   }
@@ -140,8 +150,10 @@ export const authApi = {
     if (user) {
       localStorage.setItem("authToken", API_TOKEN);
       localStorage.setItem("user", JSON.stringify(user));
+      authNotifications.loginSuccess(user.name);
       return { user };
     } else {
+      authNotifications.loginError();
       throw new Error("Неверные учетные данные");
     }
 
@@ -173,6 +185,9 @@ export const authApi = {
 
     // Проверяем, что пользователь с таким логином не существует
     if (userStorage.userExists(userData.login) || userData.login === "admin") {
+      authNotifications.registerError(
+        "Пользователь с таким логином уже существует"
+      );
       throw new Error("Пользователь с таким логином уже существует");
     }
 
@@ -198,6 +213,7 @@ export const authApi = {
     localStorage.setItem("authToken", API_TOKEN);
     localStorage.setItem("user", JSON.stringify(userForStorage));
 
+    authNotifications.registerSuccess();
     return { user: userForStorage };
 
     // Когда будет документация для регистрации, раскомментируйте:
@@ -219,6 +235,7 @@ export const authApi = {
   logout: () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
+    authNotifications.logoutSuccess();
   },
 
   /**
@@ -250,6 +267,7 @@ export const tasksApi = {
       const response = await api.get("/api/kanban");
       return response.data.tasks || [];
     } catch (error) {
+      taskNotifications.loadError();
       throw new Error(
         error.response?.data?.error || "Ошибка при загрузке задач"
       );
@@ -357,8 +375,10 @@ export const tasksApi = {
 
       const data = await response.json();
 
+      taskNotifications.created(taskForAPI.title);
       return data.tasks; // Возвращает обновленный список
     } catch (error) {
+      taskNotifications.saveError();
       throw new Error(error.message || "Ошибка при создании задачи");
     }
   },
@@ -449,8 +469,10 @@ export const tasksApi = {
 
       const data = await response.json();
 
+      taskNotifications.updated(taskForAPI.title);
       return data.tasks; // Возвращает обновленный список
     } catch (error) {
+      taskNotifications.saveError();
       throw new Error(error.message || "Ошибка при обновлении задачи");
     }
   },
@@ -463,8 +485,10 @@ export const tasksApi = {
   deleteTask: async (id) => {
     try {
       const response = await api.delete(`/api/kanban/${id}`);
+      taskNotifications.deleted("Задача");
       return response.data.tasks; // Возвращает обновленный список
     } catch (error) {
+      taskNotifications.deleteError();
       throw new Error(
         error.response?.data?.error || "Ошибка при удалении задачи"
       );

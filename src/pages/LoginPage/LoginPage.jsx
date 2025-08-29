@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { generalNotifications } from "../../services/toastNotifications";
 import {
   PageWrapper,
   AuthContainer,
@@ -85,6 +86,7 @@ function LoginPage() {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
+      generalNotifications.validationError("Заполните все обязательные поля");
       return;
     }
 

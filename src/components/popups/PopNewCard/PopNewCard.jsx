@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Calendar from "../../Calendar/Calendar";
 import { useTasks } from "../../../contexts/useTasks";
+import { generalNotifications } from "../../../services/toastNotifications";
 import {
   PopNewCardContainer,
   PopNewCardInner,
@@ -69,6 +70,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
     e.preventDefault();
 
     if (!formData.title.trim()) {
+      generalNotifications.validationError("Введите название задачи");
       return;
     }
 
