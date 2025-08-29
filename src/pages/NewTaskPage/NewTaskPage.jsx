@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTasks } from "../../contexts/TasksContext";
+import { useTasks } from "../../contexts/useTasks";
 import Header from "../../components/Header/Header";
 import PopUser from "../../components/popups/PopUser/PopUser";
 import { Wrapper } from "../../App.styled";
@@ -60,17 +60,12 @@ function NewTaskPage() {
         date: null, // Дата не задается на этой странице
       };
 
-      console.log("Создаем новую задачу:", taskData);
-
       // Создаем задачу через контекст
       await createTask(taskData);
 
-      console.log("Задача успешно создана");
-
       // Перенаправляем на главную страницу
       navigate("/");
-    } catch (err) {
-      console.error("Ошибка при создании задачи:", err);
+    } catch {
       // Ошибка уже обработана в контексте
     }
   };

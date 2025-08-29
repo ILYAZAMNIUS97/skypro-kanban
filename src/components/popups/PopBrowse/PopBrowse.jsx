@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTasks } from "../../../contexts/TasksContext";
+import { useTasks } from "../../../contexts/useTasks";
 import Calendar from "../../Calendar/Calendar";
 import "./PopBrowse.css";
 
@@ -52,8 +52,7 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
           } else if (card.date.includes(".")) {
             safeDate = card.date; // Уже в нужном формате
           }
-        } catch (error) {
-          console.warn("Ошибка при инициализации даты:", error);
+        } catch {
           safeDate = "";
         }
       }
@@ -112,16 +111,12 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
         date: editDate || "",
       };
 
-      console.log("Отправляем данные для обновления:", updatedData);
-
       const updatedTasks = await updateTask(card._id, updatedData);
-      console.log("Задача обновлена:", updatedTasks);
 
       if (onTaskUpdated) {
         onTaskUpdated(updatedTasks);
       }
-    } catch (err) {
-      console.error("Ошибка при обновлении задачи:", err);
+    } catch {
       // Ошибка уже обработана в контексте
     }
   };
@@ -139,13 +134,11 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       clearError();
 
       const updatedTasks = await deleteTask(card._id);
-      console.log("Задача удалена:", updatedTasks);
 
       if (onTaskDeleted) {
         onTaskDeleted(updatedTasks);
       }
-    } catch (err) {
-      console.error("Ошибка при удалении задачи:", err);
+    } catch {
       // Ошибка уже обработана в контексте
     }
   };
@@ -203,8 +196,7 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
       }
 
       return "";
-    } catch (error) {
-      console.warn("Ошибка при форматировании даты:", error);
+    } catch {
       return "";
     }
   };

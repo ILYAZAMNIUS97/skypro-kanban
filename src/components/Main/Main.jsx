@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Column from "../Column/Column";
-import { useTasks } from "../../contexts/TasksContext";
+import { useTasks } from "../../contexts/useTasks";
 import { Container } from "../../App.styled";
 import {
   MainContainer,

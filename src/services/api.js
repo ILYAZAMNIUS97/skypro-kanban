@@ -250,7 +250,6 @@ export const tasksApi = {
       const response = await api.get("/api/kanban");
       return response.data.tasks || [];
     } catch (error) {
-      console.error("Ошибка при получении задач:", error);
       throw new Error(
         error.response?.data?.error || "Ошибка при загрузке задач"
       );
@@ -267,7 +266,6 @@ export const tasksApi = {
       const response = await api.get(`/api/kanban/${id}`);
       return response.data.task;
     } catch (error) {
-      console.error("Ошибка при получении задачи:", error);
       throw new Error(
         error.response?.data?.error || "Ошибка при загрузке задачи"
       );
@@ -338,8 +336,6 @@ export const tasksApi = {
         taskForAPI.date = isoDate;
       }
 
-      console.log("Отправляем данные на API:", taskForAPI);
-
       // Используем fetch с Content-Type: text/plain
       const token = localStorage.getItem("authToken") || API_TOKEN;
 
@@ -354,19 +350,15 @@ export const tasksApi = {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Ответ сервера (текст):", errorText);
         throw new Error(
           `HTTP error! status: ${response.status}, body: ${errorText}`
         );
       }
 
       const data = await response.json();
-      console.log("Ответ от API:", data);
 
       return data.tasks; // Возвращает обновленный список
     } catch (error) {
-      console.error("Ошибка при создании задачи:", error);
-
       throw new Error(error.message || "Ошибка при создании задачи");
     }
   },
@@ -436,8 +428,6 @@ export const tasksApi = {
         taskForAPI.date = isoDate;
       }
 
-      console.log("Отправляем данные на API для обновления:", taskForAPI);
-
       // Используем fetch с Content-Type: text/plain как в createTask
       const token = localStorage.getItem("authToken") || API_TOKEN;
 
@@ -452,18 +442,15 @@ export const tasksApi = {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Ответ сервера (текст):", errorText);
         throw new Error(
           `HTTP error! status: ${response.status}, body: ${errorText}`
         );
       }
 
       const data = await response.json();
-      console.log("Ответ от API при обновлении:", data);
 
       return data.tasks; // Возвращает обновленный список
     } catch (error) {
-      console.error("Ошибка при обновлении задачи:", error);
       throw new Error(error.message || "Ошибка при обновлении задачи");
     }
   },
@@ -478,7 +465,6 @@ export const tasksApi = {
       const response = await api.delete(`/api/kanban/${id}`);
       return response.data.tasks; // Возвращает обновленный список
     } catch (error) {
-      console.error("Ошибка при удалении задачи:", error);
       throw new Error(
         error.response?.data?.error || "Ошибка при удалении задачи"
       );

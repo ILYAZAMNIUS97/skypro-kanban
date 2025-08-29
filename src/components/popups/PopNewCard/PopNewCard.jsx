@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./PopNewCard.css";
 import Calendar from "../../Calendar/Calendar";
-import { useTasks } from "../../../contexts/TasksContext";
+import { useTasks } from "../../../contexts/useTasks";
 
 function PopNewCard({ isVisible, onClose, onTaskCreated }) {
   const { createTask, isLoading, error, clearError } = useTasks();
@@ -67,8 +67,6 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
       // Отправляем запрос на создание задачи через контекст
       const result = await createTask(taskData);
 
-      console.log("Задача успешно создана:", result);
-
       // Вызываем callback для обновления UI если он передан
       if (onTaskCreated) {
         onTaskCreated(result);
@@ -76,8 +74,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
 
       // Закрываем модальное окно
       handleClose();
-    } catch (error) {
-      console.error("Ошибка при создании задачи:", error);
+    } catch {
       // Ошибка уже обработана в контексте
     }
   };
