@@ -30,6 +30,15 @@ export const LoaderColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 18px;
+  background-color: #f8fafd;
+  border-radius: 10px;
+  padding: 15px;
+  min-height: 400px;
+
+  @media screen and (max-width: 768px) {
+    padding: 12px;
+    min-height: 300px;
+  }
 `;
 
 export const LoaderColumnTitle = styled.div`
@@ -46,12 +55,17 @@ export const LoaderColumnTitle = styled.div`
   padding: 0 15px;
   display: flex;
   align-items: center;
+  position: relative;
 
   /* Показываем текст поверх скелетона для лучшего UX */
   &::after {
     content: attr(children);
     color: #94a6be;
     position: absolute;
+    left: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
   }
 `;
 
@@ -80,13 +94,21 @@ export const LoaderCardLine = styled.div`
   border-radius: 3px;
   animation: ${shimmer} 2s infinite linear;
 
+  &:first-child {
+    width: 90%;
+  }
+
+  &:nth-child(2) {
+    width: 75%;
+  }
+
   @media screen and (max-width: 768px) {
     height: 14px;
   }
 `;
 
 export const LoaderCardShortLine = styled.div`
-  width: 60%;
+  width: 50%;
   height: 14px;
   background: linear-gradient(90deg, #f4f6f8 25%, #e5e8ed 50%, #f4f6f8 75%);
   background-size: 200px 100%;
