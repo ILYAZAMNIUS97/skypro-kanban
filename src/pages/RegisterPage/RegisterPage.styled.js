@@ -4,7 +4,7 @@ export const PageWrapper = styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: #eaeef6;
+  background-color: ${({ theme }) => theme.colors.background};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,10 +21,10 @@ export const AuthContainer = styled.div`
 export const AuthModal = styled.div`
   width: 368px;
   height: auto;
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.colors.modalBackground};
   border-radius: 10px;
-  border: 0.7px solid #d4dbe5;
-  box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
+  border: 0.7px solid ${({ theme }) => theme.colors.inputBorder};
+  box-shadow: 0px 4px 67px -12px ${({ theme }) => theme.colors.shadow};
   padding: 40px 30px;
 `;
 
@@ -44,7 +44,7 @@ export const AuthTitle = styled.div`
   margin-bottom: 20px;
 
   h2 {
-    color: #000;
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 `;
 
@@ -70,30 +70,34 @@ export const AuthInput = styled.input`
   width: 100%;
   min-width: 100%;
   border-radius: 8px;
-  border: 0.7px solid ${(props) => (props.$hasError ? "#ff6b6b" : "#d4dbe5")};
+  border: 0.7px solid
+    ${(props) => (props.$hasError ? "#ff6b6b" : props.theme.colors.inputBorder)};
   outline: none;
   padding: 10px 8px;
   font-size: 14px;
   line-height: 1;
   letter-spacing: -0.14px;
+  background-color: ${({ theme }) => theme.colors.inputBackground};
+  color: ${({ theme }) => theme.colors.textPrimary};
 
   &::placeholder {
     font-weight: 400;
     font-size: 14px;
     line-height: 21px;
     letter-spacing: -0.14px;
-    color: #94a6be;
+    color: ${({ theme }) => theme.colors.placeholder};
   }
 
   &:focus {
-    border-color: ${(props) => (props.$hasError ? "#ff6b6b" : "#94a6be")};
+    border-color: ${(props) =>
+      props.$hasError ? "#ff6b6b" : props.theme.colors.textSecondary};
   }
 `;
 
 export const AuthButton = styled.button`
   width: 100%;
   height: 30px;
-  background-color: #565eef;
+  background-color: ${({ theme }) => theme.colors.button};
   border-radius: 4px;
   border: none;
   outline: none;
@@ -109,11 +113,11 @@ export const AuthButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #33399b;
+    background-color: ${({ theme }) => theme.colors.buttonHover};
   }
 
   &:disabled {
-    background-color: #94a6be;
+    background-color: ${({ theme }) => theme.colors.buttonSecondary};
     cursor: not-allowed;
   }
 `;
@@ -128,7 +132,7 @@ export const ErrorMessage = styled.div`
 `;
 
 export const HelpText = styled.div`
-  color: #94a6be;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;
@@ -137,7 +141,7 @@ export const HelpText = styled.div`
 `;
 
 export const AuthFormP = styled.p`
-  color: #000;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 14px;
   font-weight: 400;
   line-height: 150%;
@@ -145,6 +149,6 @@ export const AuthFormP = styled.p`
 
   a {
     text-decoration: underline;
-    color: #565eef;
+    color: ${({ theme }) => theme.colors.button};
   }
 `;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/useTheme";
 import { Container } from "../../App.styled";
 import {
   HeaderContainer,
@@ -18,6 +19,7 @@ import {
 
 function Header({ onShowExitModal, onShowNewCardModal }) {
   const { user } = useAuth();
+  const { isDarkTheme, toggleTheme } = useTheme();
   const [showUserPopup, setShowUserPopup] = useState(false);
 
   const toggleUserPopup = () => {
@@ -41,14 +43,12 @@ function Header({ onShowExitModal, onShowNewCardModal }) {
     <HeaderContainer>
       <Container>
         <HeaderBlock>
-          <LogoContainer className="_show _light">
+          <LogoContainer>
             <a href="" target="_self">
-              <img src="images/logo.png" alt="logo" />
-            </a>
-          </LogoContainer>
-          <LogoContainer className="_dark">
-            <a href="" target="_self">
-              <img src="images/logo_dark.png" alt="logo" />
+              <img
+                src={isDarkTheme ? "images/logo_dark.png" : "images/logo.png"}
+                alt="logo"
+              />
             </a>
           </LogoContainer>
           <HeaderNav>
@@ -61,7 +61,11 @@ function Header({ onShowExitModal, onShowNewCardModal }) {
               <UserEmail>{userEmail}</UserEmail>
               <ThemeContainer>
                 <p>Темная тема</p>
-                <ThemeCheckbox name="checkbox" />
+                <ThemeCheckbox
+                  name="checkbox"
+                  checked={isDarkTheme}
+                  onChange={toggleTheme}
+                />
               </ThemeContainer>
               <LogoutButton type="button" onClick={handleLogoutClick}>
                 Выйти

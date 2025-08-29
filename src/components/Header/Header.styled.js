@@ -4,7 +4,7 @@ import styled from "styled-components";
 export const HeaderContainer = styled.header`
   width: 100%;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: ${(props) => props.theme.colors.cardBackground};
 `;
 
 // Блок содержимого header
@@ -24,10 +24,6 @@ export const HeaderBlock = styled.div`
 export const LogoContainer = styled.div`
   img {
     width: 85px;
-  }
-
-  &._dark {
-    display: none;
   }
 `;
 
@@ -121,9 +117,9 @@ export const UserPopup = styled.div`
   width: 213px;
   height: 205px;
   border-radius: 10px;
-  border: 0.7px solid rgba(148, 166, 190, 0.4);
-  background: #fff;
-  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
+  border: 0.7px solid ${(props) => props.theme.colors.border};
+  background: ${(props) => props.theme.colors.modalBackground};
+  box-shadow: 0px 10px 39px 0px ${(props) => props.theme.colors.shadow};
   padding: 34px;
   text-align: center;
   z-index: 2;
@@ -131,7 +127,7 @@ export const UserPopup = styled.div`
 
 // Имя пользователя в попапе
 export const UserName = styled.p`
-  color: #000;
+  color: ${(props) => props.theme.colors.textPrimary};
   font-size: 14px;
   font-weight: 500;
   line-height: 21px;
@@ -156,7 +152,7 @@ export const ThemeContainer = styled.div`
   margin-bottom: 30px;
 
   p {
-    color: #000;
+    color: ${(props) => props.theme.colors.textPrimary};
     font-size: 14px;
     line-height: 21px;
     letter-spacing: -0.14px;

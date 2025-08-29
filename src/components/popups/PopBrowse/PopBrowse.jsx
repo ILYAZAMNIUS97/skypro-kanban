@@ -1,7 +1,31 @@
 import { useState, useEffect } from "react";
 import { useTasks } from "../../../contexts/useTasks";
 import Calendar from "../../Calendar/Calendar";
-import "./PopBrowse.css";
+import {
+  PopBrowseContainer,
+  PopBrowseInner,
+  PopBrowseBlock,
+  PopBrowseContent,
+  PopBrowseTopBlock,
+  PopBrowseTitle,
+  PopBrowseWrap,
+  PopBrowseForm,
+  FormBrowseBlock,
+  FormBrowseTextarea,
+  StatusContainer,
+  StatusTitle,
+  StatusThemes,
+  StatusTheme,
+  SubTitle,
+  CategoriesContainer,
+  CategoriesTitle,
+  CategoryTheme,
+  ButtonContainer,
+  ButtonGroup,
+  Button,
+  ErrorContainer,
+  PopBrowseCalendar,
+} from "./PopBrowse.styled";
 
 function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
   const { updateTask, deleteTask, isLoading, error, clearError } = useTasks();
@@ -223,175 +247,144 @@ function PopBrowse({ isVisible, onClose, card, onTaskUpdated, onTaskDeleted }) {
   }
 
   return (
-    <div className={`pop-browse ${isVisible ? "_visible" : ""}`}>
-      <div className="pop-browse__container" onClick={handleOverlayClick}>
-        <div className="pop-browse__block">
-          <div className="pop-browse__content">
-            <div className="pop-browse__top-block">
-              <h3 className="pop-browse__ttl">
+    <PopBrowseContainer $visible={isVisible}>
+      <PopBrowseInner onClick={handleOverlayClick}>
+        <PopBrowseBlock $visible={isVisible}>
+          <PopBrowseContent>
+            <PopBrowseTopBlock>
+              <PopBrowseTitle>
                 {isEditMode ? (
                   <input
                     type="text"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    style={{
-                      border: "none",
-                      outline: "none",
-                      fontSize: "20px",
-                      fontWeight: "600",
-                      background: "transparent",
-                      width: "100%",
-                    }}
                   />
                 ) : (
                   editTitle
                 )}
-              </h3>
-              <div
-                className={`categories__theme theme-top ${getTopicTheme(
-                  editTopic
-                )} _active-category`}
-              >
-                <p className={getTopicTheme(editTopic)}>{editTopic}</p>
-              </div>
-            </div>
+              </PopBrowseTitle>
+              <CategoryTheme className={`${getTopicTheme(editTopic)}`}>
+                <p>{editTopic}</p>
+              </CategoryTheme>
+            </PopBrowseTopBlock>
 
-            <div className="pop-browse__status status">
-              <p className="status__p subttl">Статус</p>
-              <div className="status__themes">
+            <StatusContainer>
+              <StatusTitle>Статус</StatusTitle>
+              <StatusThemes>
                 {statuses.map((status) => (
-                  <div
+                  <StatusTheme
                     key={status}
-                    className={`status__theme ${
-                      editStatus === status ? "_selected" : ""
-                    } ${!isEditMode ? "_disabled" : ""}`}
+                    $selected={editStatus === status}
+                    $disabled={!isEditMode}
+                    data-disabled={!isEditMode}
                     onClick={
                       isEditMode ? () => handleStatusChange(status) : undefined
                     }
-                    style={{
-                      cursor: isEditMode ? "pointer" : "default",
-                      backgroundColor:
-                        editStatus === status && isEditMode ? "#94A6BE" : "",
-                      color:
-                        editStatus === status && isEditMode ? "#ffffff" : "",
-                    }}
                   >
                     <p>{status}</p>
-                  </div>
+                  </StatusTheme>
                 ))}
-              </div>
-            </div>
+              </StatusThemes>
+            </StatusContainer>
 
-            <div className="pop-browse__wrap">
-              <form className="pop-browse__form form-browse">
-                <div className="form-browse__block">
-                  <label htmlFor="textArea01" className="subttl">
-                    Описание задачи
-                  </label>
-                  <textarea
-                    className="form-browse__area"
+            <PopBrowseWrap>
+              <PopBrowseForm>
+                <FormBrowseBlock>
+                  <SubTitle htmlFor="textArea01">Описание задачи</SubTitle>
+                  <FormBrowseTextarea
                     name="text"
                     id="textArea01"
                     readOnly={!isEditMode}
+                    $readOnly={!isEditMode}
                     placeholder="Введите описание задачи..."
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
-                    style={{
-                      backgroundColor: isEditMode ? "#ffffff" : "#eaeef6",
-                      cursor: isEditMode ? "text" : "default",
-                    }}
                   />
-                </div>
-              </form>
-              <Calendar
-                selectedDate={formatDate(editDate)}
-                showPeriod={true}
-                readOnly={!isEditMode}
-                onDateSelect={isEditMode ? handleDateSelect : undefined}
-              />
-            </div>
+                </FormBrowseBlock>
+              </PopBrowseForm>
+              <PopBrowseCalendar>
+                <Calendar
+                  selectedDate={formatDate(editDate)}
+                  showPeriod={true}
+                  readOnly={!isEditMode}
+                  onDateSelect={isEditMode ? handleDateSelect : undefined}
+                />
+              </PopBrowseCalendar>
+            </PopBrowseWrap>
 
-            <div className="theme-down__categories theme-down">
-              <p className="categories__p subttl">Категория</p>
-              <div
-                className={`categories__theme ${getTopicTheme(
-                  editTopic
-                )} _active-category`}
-              >
-                <p className={getTopicTheme(editTopic)}>{editTopic}</p>
-              </div>
-            </div>
+            <CategoriesContainer className="theme-down">
+              <CategoriesTitle>Категория</CategoriesTitle>
+              <CategoryTheme className={`${getTopicTheme(editTopic)}`}>
+                <p>{editTopic}</p>
+              </CategoryTheme>
+            </CategoriesContainer>
 
-            {error && <div className="pop-browse__error">{error}</div>}
+            {error && <ErrorContainer>{error}</ErrorContainer>}
 
             {/* Кнопки в режиме просмотра */}
-            <div
-              className={`pop-browse__btn-browse ${isEditMode ? "_hide" : ""}`}
-            >
-              <div className="btn-group">
-                <button
-                  className="btn-browse__edit _btn-bor _hover03"
+            <ButtonContainer $visible={!isEditMode}>
+              <ButtonGroup>
+                <Button
+                  className="btn-secondary"
                   onClick={handleEditModeToggle}
                   disabled={isLoading}
                 >
                   Редактировать задачу
-                </button>
-                <button
-                  className="btn-browse__delete _btn-bor _hover03"
+                </Button>
+                <Button
+                  className="btn-secondary"
                   onClick={handleDelete}
                   disabled={isLoading}
                 >
                   {isLoading ? "Удаление..." : "Удалить задачу"}
-                </button>
-              </div>
-              <button
-                className="btn-browse__close _btn-bg _hover01"
+                </Button>
+              </ButtonGroup>
+              <Button
+                className="btn-primary"
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Закрыть
-              </button>
-            </div>
+              </Button>
+            </ButtonContainer>
 
             {/* Кнопки в режиме редактирования */}
-            <div
-              className={`pop-browse__btn-edit ${!isEditMode ? "_hide" : ""}`}
-            >
-              <div className="btn-group">
-                <button
-                  className="btn-edit__edit _btn-bg _hover01"
+            <ButtonContainer $visible={isEditMode}>
+              <ButtonGroup>
+                <Button
+                  className="btn-primary"
                   onClick={handleSave}
                   disabled={isLoading}
                 >
                   {isLoading ? "Сохранение..." : "Сохранить"}
-                </button>
-                <button
-                  className="btn-edit__edit _btn-bor _hover03"
+                </Button>
+                <Button
+                  className="btn-secondary"
                   onClick={handleEditModeToggle}
                   disabled={isLoading}
                 >
                   Отменить
-                </button>
-                <button
-                  className="btn-edit__delete _btn-bor _hover03"
+                </Button>
+                <Button
+                  className="btn-secondary"
                   onClick={handleDelete}
                   disabled={isLoading}
                 >
                   {isLoading ? "Удаление..." : "Удалить задачу"}
-                </button>
-              </div>
-              <button
-                className="btn-edit__close _btn-bg _hover01"
+                </Button>
+              </ButtonGroup>
+              <Button
+                className="btn-primary"
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Закрыть
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </Button>
+            </ButtonContainer>
+          </PopBrowseContent>
+        </PopBrowseBlock>
+      </PopBrowseInner>
+    </PopBrowseContainer>
   );
 }
 
