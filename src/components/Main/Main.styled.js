@@ -3,7 +3,7 @@ import styled from "styled-components";
 // Основной контейнер main
 export const MainContainer = styled.main`
   width: 100%;
-  background-color: #eaeef6;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 // Блок содержимого main

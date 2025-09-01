@@ -1,8 +1,6 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { tasksApi } from "../services/api";
-
-// Создаем контекст задач
-const TasksContext = createContext(null);
+import { TasksContext } from "./contexts";
 
 /**
  * Провайдер контекста задач
@@ -22,7 +20,6 @@ export const TasksProvider = ({ children }) => {
       const tasksData = await tasksApi.getTasks();
       setTasks(tasksData);
     } catch (err) {
-      console.error("Ошибка загрузки задач:", err);
       setError(err.message || "Ошибка при загрузке задач");
     } finally {
       setIsLoading(false);
@@ -42,7 +39,6 @@ export const TasksProvider = ({ children }) => {
       setTasks(updatedTasks);
       return updatedTasks;
     } catch (err) {
-      console.error("Ошибка создания задачи:", err);
       setError(err.message || "Ошибка при создании задачи");
       throw err;
     } finally {
@@ -64,7 +60,6 @@ export const TasksProvider = ({ children }) => {
       setTasks(updatedTasks);
       return updatedTasks;
     } catch (err) {
-      console.error("Ошибка обновления задачи:", err);
       setError(err.message || "Ошибка при обновлении задачи");
       throw err;
     } finally {
@@ -85,7 +80,6 @@ export const TasksProvider = ({ children }) => {
       setTasks(updatedTasks);
       return updatedTasks;
     } catch (err) {
-      console.error("Ошибка удаления задачи:", err);
       setError(err.message || "Ошибка при удалении задачи");
       throw err;
     } finally {
@@ -104,7 +98,6 @@ export const TasksProvider = ({ children }) => {
       const task = await tasksApi.getTask(id);
       return task;
     } catch (err) {
-      console.error("Ошибка получения задачи:", err);
       setError(err.message || "Ошибка при получении задачи");
       throw err;
     }
@@ -153,18 +146,4 @@ export const TasksProvider = ({ children }) => {
   return (
     <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
   );
-};
-
-/**
- * Хук для использования контекста задач
- * @returns {Object} Контекст задач
- */
-export const useTasks = () => {
-  const context = useContext(TasksContext);
-
-  if (!context) {
-    throw new Error("useTasks должен использоваться внутри TasksProvider");
-  }
-
-  return context;
 };

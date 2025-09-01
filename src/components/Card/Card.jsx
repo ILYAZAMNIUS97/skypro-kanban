@@ -9,7 +9,14 @@ import {
   CardDate,
 } from "./Card.styled";
 
-function CardComponent({ topic, title, date, cardData, onCardClick }) {
+function CardComponent({
+  topic,
+  title,
+  date,
+  cardData,
+  onCardClick,
+  onDragStart,
+}) {
   // Определяем тему карточки на основе topic
   const getTheme = (topic) => {
     switch (topic) {
@@ -38,9 +45,20 @@ function CardComponent({ topic, title, date, cardData, onCardClick }) {
     // Здесь можно добавить функционал меню карточки в будущем
   };
 
+  const handleDragStart = (e) => {
+    if (onDragStart && cardData) {
+      onDragStart(e, cardData);
+    }
+  };
+
   return (
     <CardItem>
-      <Card onClick={handleCardClick} style={{ cursor: "pointer" }}>
+      <Card
+        onClick={handleCardClick}
+        style={{ cursor: "pointer" }}
+        draggable={true}
+        onDragStart={handleDragStart}
+      >
         <CardGroup>
           <CardTheme className={theme}>
             <p>{themeText}</p>

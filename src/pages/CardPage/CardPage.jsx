@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useTasks } from "../../contexts/TasksContext";
+import { useTasks } from "../../contexts/useTasks";
 import Header from "../../components/Header/Header";
 import PopUser from "../../components/popups/PopUser/PopUser";
 import { Wrapper } from "../../App.styled";

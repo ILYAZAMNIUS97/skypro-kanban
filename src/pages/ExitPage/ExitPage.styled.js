@@ -4,7 +4,7 @@ export const PageWrapper = styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: #eaeef6;
+  background-color: ${({ theme }) => theme.colors.background};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,10 +36,10 @@ export const ExitContainer = styled.div`
 export const ExitModal = styled.div`
   width: 368px;
   height: auto;
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.colors.modalBackground};
   border-radius: 10px;
-  border: 0.7px solid #d4dbe5;
-  box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
+  border: 0.7px solid ${({ theme }) => theme.colors.inputBorder};
+  box-shadow: 0px 4px 67px -12px ${({ theme }) => theme.colors.shadow};
   padding: 40px 30px;
   animation: slideIn 0.2s ease-out;
 
@@ -71,7 +71,7 @@ export const ExitTitle = styled.div`
   margin-bottom: 20px;
 
   h2 {
-    color: #000;
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 `;
 
@@ -81,7 +81,7 @@ export const ExitText = styled.div`
 
   p {
     font-size: 14px;
-    color: #000;
+    color: ${({ theme }) => theme.colors.textSecondary};
     line-height: 150%;
   }
 `;
@@ -96,7 +96,7 @@ export const ExitButtons = styled.div`
 export const ExitButtonYes = styled.button`
   width: 100%;
   height: 30px;
-  background-color: #565eef;
+  background-color: ${({ theme }) => theme.colors.button};
   border-radius: 4px;
   border: none;
   outline: none;
@@ -111,7 +111,7 @@ export const ExitButtonYes = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #33399b;
+    background-color: ${({ theme }) => theme.colors.buttonHover};
   }
 `;
 
@@ -120,7 +120,7 @@ export const ExitButtonNo = styled.button`
   height: 30px;
   background-color: transparent;
   border-radius: 4px;
-  border: 0.7px solid #565eef;
+  border: 0.7px solid ${({ theme }) => theme.colors.button};
   outline: none;
   display: flex;
   align-items: center;
@@ -129,10 +129,13 @@ export const ExitButtonNo = styled.button`
   line-height: 1;
   font-weight: 500;
   letter-spacing: -0.14px;
-  color: #565eef;
+  color: ${({ theme }) => theme.colors.button};
   cursor: pointer;
 
   &:hover {
-    background-color: #f8f8f8;
+    background-color: ${({ theme }) =>
+      theme.colors.background === "#151419"
+        ? "rgba(255, 255, 255, 0.05)"
+        : "#f8f8f8"};
   }
 `;

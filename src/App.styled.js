@@ -34,7 +34,8 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100%;
     font-family: "Roboto", Arial, Helvetica, sans-serif;
-    color: #000000;
+    color: ${(props) => props.theme.colors.textPrimary};
+    background-color: ${(props) => props.theme.colors.background};
   }
 `;
 
@@ -44,7 +45,7 @@ export const Wrapper = styled.div`
   width: 100vw;
   min-height: 100vh;
   overflow: hidden;
-  background-color: #f1f1f1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 // Контейнер для центрирования контента

@@ -1,7 +1,28 @@
 import { useState } from "react";
-import "./PopNewCard.css";
 import Calendar from "../../Calendar/Calendar";
-import { useTasks } from "../../../contexts/TasksContext";
+import { useTasks } from "../../../contexts/useTasks";
+import { generalNotifications } from "../../../services/toastNotifications";
+import {
+  PopNewCardContainer,
+  PopNewCardInner,
+  PopNewCardBlock,
+  PopNewCardContent,
+  PopNewCardTitle,
+  PopNewCardClose,
+  PopNewCardWrap,
+  PopNewCardForm,
+  FormNewBlock,
+  FormNewInput,
+  FormNewTextarea,
+  FormNewCreateButton,
+  SubTitle,
+  Categories,
+  CategoriesText,
+  CategoriesThemes,
+  CategoryTheme,
+  PopNewCardCalendar,
+  ErrorContainer,
+} from "./PopNewCard.styled";
 
 function PopNewCard({ isVisible, onClose, onTaskCreated }) {
   const { createTask, isLoading, error, clearError } = useTasks();
@@ -49,6 +70,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
     e.preventDefault();
 
     if (!formData.title.trim()) {
+      generalNotifications.validationError("Введите название задачи");
       return;
     }
 
@@ -67,8 +89,6 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
       // Отправляем запрос на создание задачи через контекст
       const result = await createTask(taskData);
 
-      console.log("Задача успешно создана:", result);
-
       // Вызываем callback для обновления UI если он передан
       if (onTaskCreated) {
         onTaskCreated(result);
@@ -76,8 +96,7 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
 
       // Закрываем модальное окно
       handleClose();
-    } catch (error) {
-      console.error("Ошибка при создании задачи:", error);
+    } catch {
       // Ошибка уже обработана в контексте
     }
   };
@@ -107,45 +126,24 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
   }
 
   return (
-    <div
-      className={`pop-new-card ${isVisible ? "_visible" : ""}`}
-      id="popNewCard"
-    >
-      <div className="pop-new-card__container" onClick={handleOverlayClick}>
-        <div className="pop-new-card__block">
-          <div className="pop-new-card__content">
-            <h3 className="pop-new-card__ttl">Создание задачи</h3>
-            <a href="#" className="pop-new-card__close" onClick={handleClose}>
+    <PopNewCardContainer $visible={isVisible} id="popNewCard">
+      <PopNewCardInner onClick={handleOverlayClick}>
+        <PopNewCardBlock $visible={isVisible}>
+          <PopNewCardContent>
+            <PopNewCardTitle>Создание задачи</PopNewCardTitle>
+            <PopNewCardClose href="#" onClick={handleClose}>
               &#10006;
-            </a>
+            </PopNewCardClose>
 
-            {error && (
-              <div
-                style={{
-                  color: "#ff4757",
-                  backgroundColor: "#ffe0e0",
-                  padding: "10px",
-                  borderRadius: "4px",
-                  marginBottom: "20px",
-                  fontSize: "14px",
-                }}
-              >
-                {error}
-              </div>
-            )}
+            {error && <ErrorContainer>{error}</ErrorContainer>}
 
-            <div className="pop-new-card__wrap">
-              <form
-                className="pop-new-card__form form-new"
-                id="formNewCard"
-                onSubmit={handleSubmit}
-              >
-                <div className="form-new__block">
-                  <label htmlFor="formTitle" className="subttl">
+            <PopNewCardWrap>
+              <PopNewCardForm id="formNewCard" onSubmit={handleSubmit}>
+                <FormNewBlock>
+                  <SubTitle as="label" htmlFor="formTitle">
                     Название задачи
-                  </label>
-                  <input
-                    className="form-new__input"
+                  </SubTitle>
+                  <FormNewInput
                     type="text"
                     name="title"
                     id="formTitle"
@@ -156,39 +154,39 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
                     required
                     disabled={isLoading}
                   />
-                </div>
-                <div className="form-new__block">
-                  <label htmlFor="textArea" className="subttl">
+                </FormNewBlock>
+                <FormNewBlock>
+                  <SubTitle as="label" htmlFor="textArea">
                     Описание задачи
-                  </label>
-                  <textarea
-                    className="form-new__area"
+                  </SubTitle>
+                  <FormNewTextarea
                     name="description"
                     id="textArea"
                     placeholder="Введите описание задачи..."
                     value={formData.description}
                     onChange={handleInputChange}
                     disabled={isLoading}
-                  ></textarea>
-                </div>
-              </form>
-              <Calendar
-                selectedDate={formData.date}
-                onDateSelect={handleDateSelect}
-                showPeriod={!!formData.date}
-              />
-            </div>
-            <div className="pop-new-card__categories categories">
-              <p className="categories__p subttl">Категория</p>
-              <div className="categories__themes">
+                  />
+                </FormNewBlock>
+              </PopNewCardForm>
+              <PopNewCardCalendar>
+                <Calendar
+                  selectedDate={formData.date}
+                  onDateSelect={handleDateSelect}
+                  showPeriod={!!formData.date}
+                />
+              </PopNewCardCalendar>
+            </PopNewCardWrap>
+            <Categories>
+              <CategoriesText>
+                <SubTitle>Категория</SubTitle>
+              </CategoriesText>
+              <CategoriesThemes>
                 {categories.map((category) => (
-                  <div
+                  <CategoryTheme
                     key={category.name}
-                    className={`categories__theme ${category.className} ${
-                      selectedCategory === category.name
-                        ? "_active-category"
-                        : ""
-                    }`}
+                    className={category.className}
+                    $active={selectedCategory === category.name}
                     onClick={() =>
                       !isLoading && handleCategorySelect(category.name)
                     }
@@ -201,30 +199,23 @@ function PopNewCard({ isVisible, onClose, onTaskCreated }) {
                         : 0.4,
                     }}
                   >
-                    <p className={category.className}>{category.name}</p>
-                  </div>
+                    <p>{category.name}</p>
+                  </CategoryTheme>
                 ))}
-              </div>
-            </div>
-            <button
-              className="form-new__create _hover01"
+              </CategoriesThemes>
+            </Categories>
+            <FormNewCreateButton
               id="btnCreate"
+              type="button"
               onClick={handleSubmit}
               disabled={!formData.title.trim() || isLoading}
-              style={{
-                opacity: !formData.title.trim() || isLoading ? 0.6 : 1,
-                cursor:
-                  !formData.title.trim() || isLoading
-                    ? "not-allowed"
-                    : "pointer",
-              }}
             >
               {isLoading ? "Создание..." : "Создать задачу"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+            </FormNewCreateButton>
+          </PopNewCardContent>
+        </PopNewCardBlock>
+      </PopNewCardInner>
+    </PopNewCardContainer>
   );
 }
 
