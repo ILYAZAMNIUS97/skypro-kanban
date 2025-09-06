@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { generalNotifications } from "../../services/toastNotifications";
 import {
   PageWrapper,
+  BackgroundContainer,
   AuthContainer,
   AuthModal,
   AuthBlock,
@@ -16,6 +17,8 @@ import {
   AuthFormP,
   ErrorMessage,
   HelpText,
+  HeaderSection,
+  LogoContainer,
 } from "./LoginPage.styled";
 
 function LoginPage() {
@@ -120,69 +123,72 @@ function LoginPage() {
 
   return (
     <PageWrapper>
-      <AuthContainer>
-        <AuthModal>
-          <AuthBlock>
-            <AuthTitle>
-              <h2>Вход</h2>
-            </AuthTitle>
-            <AuthForm onSubmit={handleSubmit}>
-              <AuthFormGroup>
-                <AuthInput
-                  type="text"
-                  placeholder="Логин (используйте: admin)"
-                  value={login}
-                  onChange={handleLoginChange}
-                  $hasError={!!errors.login || !!authError}
-                  required
-                />
-                {errors.login && errors.login !== "invalid" && (
-                  <ErrorMessage>{errors.login}</ErrorMessage>
-                )}
-                {!errors.login && !authError && (
-                  <HelpText>Для демо используйте логин: admin</HelpText>
-                )}
-              </AuthFormGroup>
-              <AuthFormGroup>
-                <AuthInput
-                  type="password"
-                  placeholder="Пароль (используйте: admin)"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  $hasError={!!errors.password || !!authError}
-                  required
-                />
-                {errors.password && errors.password !== "invalid" && (
-                  <ErrorMessage>{errors.password}</ErrorMessage>
-                )}
-                {!errors.password && !authError && (
-                  <HelpText>Для демо используйте пароль: admin</HelpText>
-                )}
-              </AuthFormGroup>
+      <BackgroundContainer>
+        <HeaderSection>
+          <LogoContainer>
+            <img src="/images/logo-wallet.svg" alt="Skypro Wallet" />
+          </LogoContainer>
+        </HeaderSection>
 
-              {authError && (
+        <AuthContainer>
+          <AuthModal>
+            <AuthBlock>
+              <AuthTitle>
+                <h2>Вход</h2>
+              </AuthTitle>
+              <AuthForm onSubmit={handleSubmit}>
                 <AuthFormGroup>
-                  <ErrorMessage
-                    style={{ textAlign: "center", marginTop: "10px" }}
-                  >
-                    {authError}
-                  </ErrorMessage>
+                  <AuthInput
+                    type="text"
+                    placeholder="ivanova|"
+                    value={login}
+                    onChange={handleLoginChange}
+                    $hasError={!!errors.login || !!authError}
+                    required
+                  />
+                  {errors.login && errors.login !== "invalid" && (
+                    <ErrorMessage>{errors.login}</ErrorMessage>
+                  )}
                 </AuthFormGroup>
-              )}
 
-              <AuthFormGroup2>
-                <AuthButton type="submit" disabled={isLoading}>
-                  {isLoading ? "Вход..." : "Войти"}
-                </AuthButton>
-                <AuthFormP>
-                  Нужно зарегистрироваться?{" "}
-                  <Link to="/register">Регистрируйтесь здесь</Link>
-                </AuthFormP>
-              </AuthFormGroup2>
-            </AuthForm>
-          </AuthBlock>
-        </AuthModal>
-      </AuthContainer>
+                <AuthFormGroup>
+                  <AuthInput
+                    type="password"
+                    placeholder="Пароль"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    $hasError={!!errors.password || !!authError}
+                    required
+                  />
+                  {errors.password && errors.password !== "invalid" && (
+                    <ErrorMessage>{errors.password}</ErrorMessage>
+                  )}
+                </AuthFormGroup>
+
+                {authError && (
+                  <AuthFormGroup>
+                    <ErrorMessage
+                      style={{ textAlign: "center", marginTop: "10px" }}
+                    >
+                      {authError}
+                    </ErrorMessage>
+                  </AuthFormGroup>
+                )}
+
+                <AuthFormGroup2>
+                  <AuthButton type="submit" disabled={isLoading}>
+                    {isLoading ? "Вход..." : "Войти"}
+                  </AuthButton>
+                  <AuthFormP>
+                    Нужно зарегистрироваться?{" "}
+                    <Link to="/register">Регистрируйтесь здесь</Link>
+                  </AuthFormP>
+                </AuthFormGroup2>
+              </AuthForm>
+            </AuthBlock>
+          </AuthModal>
+        </AuthContainer>
+      </BackgroundContainer>
     </PageWrapper>
   );
 }
